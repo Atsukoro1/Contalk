@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fastify/cors": "^7.0.0",
     "ajv": "^8.11.0",
     "argon2": "^0.28.5",
     "dotenv": "^16.0.0",

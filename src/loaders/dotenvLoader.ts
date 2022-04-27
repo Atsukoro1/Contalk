@@ -56,7 +56,7 @@ export default async function checkForDotenvVars() : Promise<void> {
     await dotenv.config();
 
     /*
-        Variables to check
+        Variables to be checked
     */
     const toCheck : Array<String> = [
         "MONGO_URI",
@@ -64,7 +64,7 @@ export default async function checkForDotenvVars() : Promise<void> {
     ];
 
     /*
-        Copies system process variables and sorts them alphabetical
+        Copies system process variables and sorts them in alphabetical order
     */
     const envVars : Array<String> = [...Object.keys(process.env).sort()];
 
