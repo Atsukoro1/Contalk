@@ -55,11 +55,17 @@ async function binSearch(toSearch: String, field: Array<String>): Promise<Boolea
 export default async function checkForDotenvVars() : Promise<void> {
     await dotenv.config();
 
+    /*
+        Variables to check
+    */
     const toCheck : Array<String> = [
         "MONGO_URI",
         "PORT"
     ];
 
+    /*
+        Copies system process variables and sorts them alphabetical
+    */
     const envVars : Array<String> = [...Object.keys(process.env).sort()];
 
     toCheck.forEach(async(el : String) => {
