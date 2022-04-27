@@ -1,4 +1,4 @@
-import fastify, { FastifyInstance, RouteOptions } from "fastify";
+import fastify, { FastifyInstance, FastifyRequest, RouteOptions } from "fastify";
 import fs from "fs";
 
 /**
@@ -25,8 +25,8 @@ async function loadRoutes(server : FastifyInstance) : Promise<void> {
 /**
  * @async
  * @name loadMiddleware
- * @description Load middlewares, loggers and some other important things 
- * to run the whole application successfully
+ * @description Load middlewares, validators and other important things that we need
+ * to run the whole app corectly
  * @param {FastifyInstance} server Fastify instance to insert middleware into
  * @returns {Promise<void>}
  */
