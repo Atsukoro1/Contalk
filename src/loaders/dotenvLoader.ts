@@ -60,10 +60,10 @@ export default async function checkForDotenvVars() : Promise<void> {
         "PORT"
     ];
 
-    const envVars : Array<String> = [...Object.keys(process.env)];
+    const envVars : Array<String> = [...Object.keys(process.env).sort()];
 
     toCheck.forEach(async(el : String) => {
-        const found : Boolean = await binSearch(el, envVars);
+        const found : Boolean = await binSearch(el, [...envVars]);
 
         if(found) {
             console.log(`[DOTENV] Variable ${el} successfully loaded.`);
