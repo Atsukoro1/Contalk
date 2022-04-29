@@ -1,3 +1,4 @@
+// Interfaces
 import { AuthErrorI, AuthResponseI } from "../interfaces/auth.interface";
 
 export async function loginService() : Promise<AuthResponseI | AuthErrorI> {
