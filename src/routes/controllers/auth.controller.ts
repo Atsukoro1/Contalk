@@ -1,5 +1,5 @@
 // Modules
-import fastify, { 
+import { 
     FastifyReply,
     FastifyRequest, 
     RouteOptions 
@@ -26,6 +26,10 @@ export const loginController : RouteOptions = {
         })
     },
 
+    validatorCompiler: ({ schema } : any) => {
+        return data => schema.validate(data)
+    },
+
     async handler(req : FastifyRequest, res : FastifyReply) {
         const response : AuthErrorI | AuthResponseI = await loginService();
 
@@ -42,6 +46,10 @@ export const registerController : RouteOptions = {
             email: Joi.string().email().min(5).max(255).required(),
             password: Joi.string().min(8).max(255).required()
         })
+    },
+
+    validatorCompiler: ({ schema } : any) => {
+        return data => schema.validate(data)
     },
 
     async handler(req : FastifyRequest, res : FastifyReply) {
