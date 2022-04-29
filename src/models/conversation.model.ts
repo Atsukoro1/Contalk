@@ -1,6 +1,6 @@
-import { Schema, model, ObjectId } from "mongoose";
+import { Schema, model } from "mongoose";
 
-export interface ConversationI {
+export interface Conversation {
     title?: String;
     creator: Schema.Types.ObjectId;
     recipient: Schema.Types.ObjectId;
@@ -9,7 +9,7 @@ export interface ConversationI {
     updatedAt: Date;  
 };
 
-const newConversation : Schema = new Schema({
+const conversationSchema : Schema = new Schema({
     title: {
         type: String,
         min: 3,
@@ -31,12 +31,6 @@ const newConversation : Schema = new Schema({
         unique: false
     },
 
-    channelId: {
-        type: Number,
-        required: true,
-        unique: false
-    },
-
     createdAt: {
         type: Date,
         default: new Date(),
@@ -51,4 +45,4 @@ const newConversation : Schema = new Schema({
     }
 });
 
-export const Conversation = model("Conversation", newConversation);
+export const Conversation = model("Conversation", conversationSchema);

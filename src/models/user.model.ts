@@ -1,19 +1,17 @@
 import { Schema, model } from "mongoose";
 
-export interface UserI {
+export interface User {
     name: String;
     surname: String;
     phone?: Number;
     password: String;
     email: String;
     isActive: Boolean;
-    isReported: Boolean;
-    isBlocked: Boolean;
     createdAt: Date;
     updatedAt: Date;
 };
 
-const newUser : Schema = new Schema({
+const userSchema : Schema = new Schema({
     name: {
         type: String,
         min: 3,
@@ -55,16 +53,6 @@ const newUser : Schema = new Schema({
         default: true
     },
 
-    isBlocked: {
-        type: Boolean,
-        default: false
-    },
-
-    isReported: {
-        type: Boolean,
-        default: false
-    },
-
     createdAt: {
         type: Date,
         default: new Date()
@@ -77,4 +65,4 @@ const newUser : Schema = new Schema({
     }
 });
 
-export const UserModel = model("User", newUser);
+export const User = model("User", userSchema);
