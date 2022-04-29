@@ -1,25 +1,39 @@
 import { Schema, model } from "mongoose";
 
-export enum UserStatusE {
-    ONLINE = "ONLINE",
-    DND = "DND",
-    IDLE = "IDLE",
-    OFFLINE = "OFFLINE"
-};
-
 export interface UserI {
-    username: String;
+    name: String;
+    surname: String;
+    phone?: Number;
     password: String;
     email: String;
-    status: String;
+    isActive: Boolean;
+    isReported: Boolean;
+    isBlocked: Boolean;
+    createdAt: Date;
+    updatedAt: Date;
 };
 
 const newUser : Schema = new Schema({
-    username: {
+    name: {
         type: String,
         min: 3,
-        max: 42,
+        max: 32,
         required: true
+    },
+
+    surname: {
+        type: String,
+        min: 3,
+        max: 32,
+        required: true
+    },
+
+    phone: {
+        type: Number,
+        required: false,
+        unique: false,
+        min: 9,
+        max: 32
     },
 
     password: {
@@ -29,18 +43,37 @@ const newUser : Schema = new Schema({
     },
 
     email: {
-        type: Number,
-        required: true,
+        type: String,
         unique: true,
         min: 5,
-        max: 255
+        max: 255,
+        required: true
     },
 
-    status: {
-        type: String,
-        enum: Object.values(UserStatusE),
-        default: "ONLINE",
-        required: false
+    isActive: {
+        type: Boolean,
+        default: true
+    },
+
+    isBlocked: {
+        type: Boolean,
+        default: false
+    },
+
+    isReported: {
+        type: Boolean,
+        default: false
+    },
+
+    createdAt: {
+        type: Date,
+        default: new Date()
+    },
+
+    updatedAt: {
+        type: Date,
+        immutable: true,
+        default: new Date()
     }
 });
 
