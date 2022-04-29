@@ -1,14 +1,17 @@
 import { AuthErrorI, AuthResponseI } from "../interfaces/auth.interface";
 
 export async function loginService() : Promise<AuthResponseI | AuthErrorI> {
-    return { 
-        token: "dsijd",
-        message: "dsds"
+    return {
+        message: "Ahoj! Prosel jsi",
+        statusCode: 429,
+        errors: "zmrde!"
     };
 };
 
 export async function registerService() : Promise<AuthResponseI | AuthErrorI> {
     return {
-        errors: ["dsd"]
-    }
+        message: "Ahoj! Prosel jsi",
+        statusCode: 429,
+        errors: "zmrde!"
+    };
 };

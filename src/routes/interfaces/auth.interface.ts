@@ -1,5 +1,7 @@
 export interface AuthErrorI {
-    errors: Array<String>;
+    statusCode : Number;
+    errors: String;
+    message: String;
 };
 
 export interface AuthResponseI {
