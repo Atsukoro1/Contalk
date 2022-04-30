@@ -12,8 +12,8 @@ import {
     registerService
 } from "../services/auth.service";
 import {
-    AuthErrorI,
-    AuthResponseI
+    AuthError,
+    AuthResponse
 } from "../interfaces/auth.interface";
 
 export const loginController : RouteOptions = {
@@ -31,7 +31,8 @@ export const loginController : RouteOptions = {
     },
 
     async handler(req : FastifyRequest, res : FastifyReply) {
-        const response : AuthErrorI | AuthResponseI = await loginService();
+        // @ts-ignore
+        const response : AuthError | AuthResponse = await loginService(req.body);
 
         return response;
     }
@@ -44,7 +45,10 @@ export const registerController : RouteOptions = {
         body: Joi.object({
             username: Joi.string().min(3).max(42).alphanum().required(),
             email: Joi.string().email().min(5).max(255).required(),
-            password: Joi.string().min(8).max(255).required()
+            password: Joi.string().min(8).max(255).required(),
+            name: Joi.string().min(3).max(32).alphanum().required(),
+            surname: Joi.string().min(3).max(32).alphanum().required(),
+            phone: Joi.string().required().min(9).max(32)
         })
     },
 
@@ -53,7 +57,8 @@ export const registerController : RouteOptions = {
     },
 
     async handler(req : FastifyRequest, res : FastifyReply) {
-        const response : AuthErrorI | AuthResponseI = await registerService();
+        // @ts-ignore
+        const response : AuthError | AuthResponse = await registerService(req.body);
 
         return response;
     }
