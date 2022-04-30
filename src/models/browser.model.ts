@@ -1,12 +1,18 @@
 import { Schema, model } from "mongoose";
 
 export interface Browser {
-    userAgents: Array<String>;
-    timeZone?: String;
-    ipAddr?: String;
+    author: Schema.Types.ObjectId;
+    userAgents: Array<string>;
+    timeZone?: string;
+    ipAddr?: string;
 };
 
 const browserSchema : Schema = new Schema({
+    author: {
+        type: Schema.Types.ObjectId,
+        required: true
+    },
+
     userAgents: [{
         type: String,
         min: 20,

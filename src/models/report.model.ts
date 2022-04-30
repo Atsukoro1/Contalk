@@ -4,7 +4,7 @@ export interface Report {
     createdAt: Date;
     creator: Schema.Types.ObjectId;
     target: Schema.Types.ObjectId;
-    reason: String;
+    reason: string;
 };
 
 const reportSchema = new Schema({

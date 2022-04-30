@@ -6,11 +6,11 @@ import dotenv from "dotenv";
  * @description 
  * Recursive function that uses binary search algorithm to loop through 
  * process variables and check if variables that are required are defined
- * @param {String} toSearch String that we're searching for 
- * @param {Array<String>} field Array of strings to search in
+ * @param {string} toSearch String that we're searching for 
+ * @param {Array<string>} field Array of strings to search in
  * @returns {Promise<Boolean>} If the element is in the array or not
  */
-async function binSearch(toSearch: String, field: Array<String>): Promise<Boolean> {
+async function binSearch(toSearch: string, field: Array<String>): Promise<Boolean> {
     /*
         Define a middle index of the array and check if the wanted element is there    
     */
@@ -60,15 +60,16 @@ export default async function checkForDotenvVars() : Promise<void> {
     */
     const toCheck : Array<String> = [
         "MONGO_URI",
-        "PORT"
+        "PORT",
+        "JWT_SECRET"
     ];
 
     /*
         Copies system process variables and sorts them in alphabetical order
     */
-    const envVars : Array<String> = [...Object.keys(process.env).sort()];
+    const envVars : Array<string> = [...Object.keys(process.env).sort()];
 
-    toCheck.forEach(async(el : String) => {
+    toCheck.forEach(async(el : string) => {
         const found : Boolean = await binSearch(el, [...envVars]);
 
         if(found) {

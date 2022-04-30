@@ -1,12 +1,12 @@
 import { Schema, model } from "mongoose";
 
 export interface User {
-    name: String;
-    surname: String;
-    phone?: Number;
-    password: String;
-    email: String;
-    isActive: Boolean;
+    name: string;
+    surname: string;
+    phone?: number;
+    password: string;
+    email: string;
+    isActive: boolean;
     createdAt: Date;
     updatedAt: Date;
 };

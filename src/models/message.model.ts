@@ -7,12 +7,12 @@ export enum MessageType {
 };
 
 export interface Message {
-    content: String;
+    content: string;
     author: Schema.Types.ObjectId;
     conversation: Schema.Types.ObjectId;
     messageType: MessageType;
     createdAt: Date;
-    isUpdated: Boolean;
+    isUpdated: boolean;
 };
 
 const messageSchema : Schema = new Schema({

@@ -1,10 +1,10 @@
 import { Schema, model } from "mongoose";
 
 export interface Conversation {
-    title?: String;
+    title?: string;
     creator: Schema.Types.ObjectId;
     recipient: Schema.Types.ObjectId;
-    channedId: Number;
+    channedId: number;
     createdAt: Date;
     updatedAt: Date;  
 };

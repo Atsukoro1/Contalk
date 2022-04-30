@@ -1,11 +1,23 @@
-// Interfaces
-import { AuthError, AuthLoginBody, AuthRegisterBody, AuthResponse } from "../interfaces/auth.interface";
+// Interfaces & Models
+import { 
+    AuthError,
+    AuthLoginBody, 
+    AuthRegisterBody, 
+    AuthResponse 
+} from "../interfaces/auth.interface";
 import { User } from "../../models/user.model";
 
 // Modules
 import * as argon2 from "argon2";
 import * as jwt from "jsonwebtoken";
 
+/**
+ * @async
+ * @name loginService
+ * @description Check if password matches the hash and return token, User object and message back
+ * @param {AuthLoginBody} body Body from the request 
+ * @returns {Promise<AuthError | AuthError>}
+ */
 export async function loginService(body : AuthLoginBody) : Promise<AuthResponse | AuthError> {
     const existingUser = await User.findOne({ email: body.email });
     if(!existingUser) {
@@ -32,6 +44,13 @@ export async function loginService(body : AuthLoginBody) : Promise<AuthResponse 
     };
 };
 
+/**
+ * @async
+ * @name registerService
+ * @description Register a new user and provide a User object, signed token and message back
+ * @param {AuthRegisterBody} body Body of the HTTP Request 
+ * @returns {Promise<AuthResponse | AuthError>}
+ */
 export async function registerService(body : AuthRegisterBody) : Promise<AuthResponse | AuthError> {
     const existingUser = await User.findOne({ email: body.email });
     if(existingUser) {
