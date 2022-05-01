@@ -10,7 +10,7 @@ export interface Conversation extends Document {
     recipient: Schema.Types.ObjectId;
     channedId: number;
     createdAt: Date;
-    updatedAt: Date;  
+    updatedAt: Date;
 };
 
 const conversationSchema : Schema<Conversation> = new Schema({
@@ -33,20 +33,9 @@ const conversationSchema : Schema<Conversation> = new Schema({
         required: false,
         ref: "User",
         unique: false
-    },
-
-    createdAt: {
-        type: Date,
-        default: new Date(),
-        immutable: true,
-        required: false
-    },
-
-    updatedAt: {
-        type: Date,
-        default: new Date(),
-        required: false
     }
+}, {
+    timestamps: true
 });
 
 export const Conversation = model<Conversation>("Conversation", conversationSchema);

@@ -9,6 +9,7 @@ export interface Relation extends Document {
     creator: Schema.Types.ObjectId;
     target: Schema.Types.ObjectId;
     createdAt: Date;
+    updatedAt: Date;
 };
 
 export enum RelationType {
@@ -34,13 +35,9 @@ const newRelation : Schema<Relation> = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User",
         required: true
-    },
-
-    createdAt: {
-        type: Date,
-        immutable: true,
-        default: new Date()
     }
+}, {
+    timestamps: true
 });
 
 export const Relation = model<Relation>("Relation", newRelation)

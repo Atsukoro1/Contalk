@@ -55,18 +55,10 @@ const userSchema : Schema<User> = new Schema({
     isActive: {
         type: Boolean,
         default: true
-    },
-
-    createdAt: {
-        type: Date,
-        default: new Date()
-    },
-
-    updatedAt: {
-        type: Date,
-        immutable: true,
-        default: new Date()
     }
+},
+{
+    timestamps: true
 });
 
 export const User = model<User>("User", userSchema);

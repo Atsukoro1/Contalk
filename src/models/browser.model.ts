@@ -9,6 +9,8 @@ export interface Browser extends Document {
     userAgents: Array<string>;
     timeZone: string;
     ipAddr?: string;
+    createdAt: Date;
+    updatedAt: Date;
 };
 
 const browserSchema : Schema<Browser> = new Schema({
@@ -37,6 +39,8 @@ const browserSchema : Schema<Browser> = new Schema({
         required: false,
         max: 64
     }
+}, {
+    timestamps: true
 });
 
 export const Browser = model<Browser>("Device", browserSchema);

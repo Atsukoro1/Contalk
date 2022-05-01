@@ -16,6 +16,7 @@ export interface Message extends Document {
     conversation: Schema.Types.ObjectId;
     messageType: MessageType;
     createdAt: Date;
+    updatedAt: Date;
     isUpdated: boolean;
 };
 
@@ -47,16 +48,12 @@ const messageSchema : Schema<Message> = new Schema({
         enum: MessageType
     },
 
-    createdAt: {
-        type: Date,
-        default: new Date(),
-        immutable: true
-    },
-
     isUpdated: {
         type: Boolean,
         default: false
     }
+}, {
+    timestamps: true
 });
 
 export const Message = model<Message>("Message", messageSchema);
