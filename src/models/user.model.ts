@@ -1,16 +1,18 @@
 import { 
-    Schema, 
-    model, 
-    Document 
+    Schema,
+    Types,
+    model
 } from "mongoose";
 
-export interface User extends Document {
+export interface User {
+    _id: Types.ObjectId,
     name: string;
     surname: string;
     phone?: string;
     password: string;
     email: string;
     isActive: boolean;
+    fullname: string;
     createdAt: Date;
     updatedAt: Date;
 };
@@ -58,7 +60,12 @@ const userSchema : Schema<User> = new Schema({
     }
 },
 {
-    timestamps: true
+    timestamps: true,
+    versionKey: false
+});
+
+userSchema.virtual('fullname').get(function() : String {
+    return this.name + this.surname;
 });
 
 export const User = model<User>("User", userSchema);

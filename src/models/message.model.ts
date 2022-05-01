@@ -1,7 +1,7 @@
 import { 
     Schema, 
-    model, 
-    Document 
+    model,
+    Types
 } from "mongoose";
 
 export enum MessageType {
@@ -10,10 +10,11 @@ export enum MessageType {
     EDITED = 3
 };
 
-export interface Message extends Document {
+export interface Message {
+    _id: Types.ObjectId,
     content: string;
-    author: Schema.Types.ObjectId;
-    conversation: Schema.Types.ObjectId;
+    author: Types.ObjectId;
+    conversation: Types.ObjectId;
     messageType: MessageType;
     createdAt: Date;
     updatedAt: Date;
@@ -53,7 +54,8 @@ const messageSchema : Schema<Message> = new Schema({
         default: false
     }
 }, {
-    timestamps: true
+    timestamps: true,
+    versionKey: false
 });
 
 export const Message = model<Message>("Message", messageSchema);

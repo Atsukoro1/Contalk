@@ -1,12 +1,13 @@
 import { 
     Schema, 
-    model, 
-    Document 
+    Types,
+    model
 } from "mongoose";
 
-export interface Browser extends Document {
-    author: Schema.Types.ObjectId;
-    userAgents: Array<string>;
+export interface Browser {
+    _id: Types.ObjectId,
+    author: Types.ObjectId;
+    userAgents: Types.Array<string>;
     timeZone: string;
     ipAddr?: string;
     createdAt: Date;
@@ -40,7 +41,8 @@ const browserSchema : Schema<Browser> = new Schema({
         max: 64
     }
 }, {
-    timestamps: true
+    timestamps: true,
+    versionKey: false
 });
 
 export const Browser = model<Browser>("Device", browserSchema);

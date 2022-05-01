@@ -1,12 +1,13 @@
 import { 
     Schema, 
-    model, 
-    Document 
+    Types,
+    model
 } from "mongoose";
 
-export interface Report extends Document {
-    creator: Schema.Types.ObjectId;
-    target: Schema.Types.ObjectId;
+export interface Report {
+    _id: Types.ObjectId,
+    creator: Types.ObjectId;
+    target: Types.ObjectId;
     reason: string;
     createdAt: Date;
     updatedAt: Date;
@@ -34,7 +35,8 @@ const reportSchema : Schema<Report> = new Schema({
         max: 1024
     }
 }, {
-    timestamps: true
+    timestamps: true,
+    versionKey: false
 });
 
 export const Report = model<Report>("Report", reportSchema);

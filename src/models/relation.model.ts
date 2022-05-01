@@ -1,13 +1,14 @@
 import { 
     Schema, 
-    model, 
-    Document 
+    Types,
+    model
 } from "mongoose";
 
-export interface Relation extends Document {
+export interface Relation {
+    _id: Types.ObjectId,
     type: RelationType;
-    creator: Schema.Types.ObjectId;
-    target: Schema.Types.ObjectId;
+    creator: Types.ObjectId;
+    target: Types.ObjectId;
     createdAt: Date;
     updatedAt: Date;
 };
@@ -37,7 +38,8 @@ const newRelation : Schema<Relation> = new Schema({
         required: true
     }
 }, {
-    timestamps: true
+    timestamps: true,
+    versionKey: false
 });
 
 export const Relation = model<Relation>("Relation", newRelation)

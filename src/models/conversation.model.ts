@@ -1,13 +1,14 @@
 import { 
     Schema, 
-    model, 
-    Document 
+    Types,
+    model
 } from "mongoose";
 
-export interface Conversation extends Document {
+export interface Conversation {
+    _id: Types.ObjectId,
     title?: string;
-    creator: Schema.Types.ObjectId;
-    recipient: Schema.Types.ObjectId;
+    creator: Types.ObjectId;
+    recipient: Types.ObjectId;
     channedId: number;
     createdAt: Date;
     updatedAt: Date;
@@ -35,7 +36,8 @@ const conversationSchema : Schema<Conversation> = new Schema({
         unique: false
     }
 }, {
-    timestamps: true
+    timestamps: true,
+    versionKey: false
 });
 
 export const Conversation = model<Conversation>("Conversation", conversationSchema);
