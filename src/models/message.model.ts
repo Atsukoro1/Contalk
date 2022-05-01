@@ -1,4 +1,8 @@
-import { Schema, model } from "mongoose";
+import { 
+    Schema, 
+    model, 
+    Document 
+} from "mongoose";
 
 export enum MessageType {
     POSTED = 1,
@@ -6,7 +10,7 @@ export enum MessageType {
     EDITED = 3
 };
 
-export interface Message {
+export interface Message extends Document {
     content: string;
     author: Schema.Types.ObjectId;
     conversation: Schema.Types.ObjectId;
@@ -15,7 +19,7 @@ export interface Message {
     isUpdated: boolean;
 };
 
-const messageSchema : Schema = new Schema({
+const messageSchema : Schema<Message> = new Schema({
     content: {
         type: String,
         min: 1,
@@ -55,4 +59,4 @@ const messageSchema : Schema = new Schema({
     }
 });
 
-export const Message = model("Message", messageSchema);
+export const Message = model<Message>("Message", messageSchema);

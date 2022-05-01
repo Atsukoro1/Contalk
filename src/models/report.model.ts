@@ -1,13 +1,17 @@
-import { Schema, model } from "mongoose";
+import { 
+    Schema, 
+    model, 
+    Document 
+} from "mongoose";
 
-export interface Report {
+export interface Report extends Document {
     createdAt: Date;
     creator: Schema.Types.ObjectId;
     target: Schema.Types.ObjectId;
     reason: string;
 };
 
-const reportSchema = new Schema({
+const reportSchema : Schema<Report> = new Schema({
     createdAt: {
         type: Date,
         default: new Date()
@@ -35,4 +39,4 @@ const reportSchema = new Schema({
     }
 });
 
-export const Report = model("Report", reportSchema);
+export const Report = model<Report>("Report", reportSchema);

@@ -1,6 +1,10 @@
-import { Schema, model } from "mongoose";
+import { 
+    Schema, 
+    model, 
+    Document 
+} from "mongoose";
 
-export interface Conversation {
+export interface Conversation extends Document {
     title?: string;
     creator: Schema.Types.ObjectId;
     recipient: Schema.Types.ObjectId;
@@ -9,7 +13,7 @@ export interface Conversation {
     updatedAt: Date;  
 };
 
-const conversationSchema : Schema = new Schema({
+const conversationSchema : Schema<Conversation> = new Schema({
     title: {
         type: String,
         min: 3,
@@ -45,4 +49,4 @@ const conversationSchema : Schema = new Schema({
     }
 });
 
-export const Conversation = model("Conversation", conversationSchema);
+export const Conversation = model<Conversation>("Conversation", conversationSchema);

@@ -1,13 +1,17 @@
-import { Schema, model } from "mongoose";
+import { 
+    Schema, 
+    model, 
+    Document 
+} from "mongoose";
 
-export interface Browser {
+export interface Browser extends Document {
     author: Schema.Types.ObjectId;
     userAgents: Array<string>;
-    timeZone?: string;
+    timeZone: string;
     ipAddr?: string;
 };
 
-const browserSchema : Schema = new Schema({
+const browserSchema : Schema<Browser> = new Schema({
     author: {
         type: Schema.Types.ObjectId,
         required: true
@@ -24,8 +28,7 @@ const browserSchema : Schema = new Schema({
         type: String,
         min: 5,
         max: 128,
-        required: false,
-        default: []
+        required: false
     },
 
     ipAddr: {
@@ -36,4 +39,4 @@ const browserSchema : Schema = new Schema({
     }
 });
 
-export const Browser = model("Device", browserSchema);
+export const Browser = model<Browser>("Device", browserSchema);

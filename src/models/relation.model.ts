@@ -1,6 +1,10 @@
-import { Schema, model } from "mongoose";
+import { 
+    Schema, 
+    model, 
+    Document 
+} from "mongoose";
 
-export interface Relation {
+export interface Relation extends Document {
     type: RelationType;
     creator: Schema.Types.ObjectId;
     target: Schema.Types.ObjectId;
@@ -13,7 +17,7 @@ export enum RelationType {
     FRIENDS = "FRIENDS"
 }
 
-const newRelation : Schema = new Schema({
+const newRelation : Schema<Relation> = new Schema({
     type: {
         type: String,
         required: true,
@@ -39,4 +43,4 @@ const newRelation : Schema = new Schema({
     }
 });
 
-export const Relation = model("Relation", newRelation)
+export const Relation = model<Relation>("Relation", newRelation)
