@@ -1,4 +1,3 @@
-import { FastifyRequest } from "fastify";
 import { User } from "models/user.model";
 
 export interface AuthError {
@@ -24,12 +23,4 @@ export interface AuthRegisterBody {
 export interface AuthLoginBody {
     email: string;
     password: string;
-};
-
-export interface LoginRequest extends FastifyRequest {
-    body: AuthLoginBody
-};
-
-export interface RegisterRequest extends FastifyRequest {
-    body: AuthRegisterBody
 };
