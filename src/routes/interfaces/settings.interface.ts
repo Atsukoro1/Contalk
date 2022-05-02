@@ -7,7 +7,7 @@ export interface SettingsResponse {
     success: boolean;
 };
 
-export interface SettingsBody {
+export interface SettingsBody extends Record<string, any> {
     password: string;
     newName?: string;
     newSurname?: string;

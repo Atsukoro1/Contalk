@@ -2,7 +2,7 @@
 import { 
     FastifyReply,
     FastifyRequest,
-    RouteOptions 
+    RouteOptions
 } from "fastify";
 import Joi from "joi";
 
@@ -10,10 +10,10 @@ import Joi from "joi";
 import { 
     SettingsResponse, 
     SettingsError 
-} from "routes/interfaces/settings.interface";
+} from "../interfaces/settings.interface";
 import { 
     settingsService 
-} from "routes/services/settings.service";
+} from "../services/settings.service";
 
 export const settingsController : RouteOptions = {
     url: '/settings', 

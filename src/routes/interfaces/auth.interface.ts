@@ -11,7 +11,7 @@ export interface AuthResponse {
     user: User
 };
 
-export interface AuthRegisterBody {
+export interface AuthRegisterBody extends Record<string, any> {
     username: string; 
     email: string;
     password: string;
@@ -20,7 +20,7 @@ export interface AuthRegisterBody {
     phone: number;
 };
 
-export interface AuthLoginBody {
+export interface AuthLoginBody extends Record<string, any> {
     email: string;
     password: string;
 };

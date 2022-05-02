@@ -2,7 +2,9 @@ import {
     SettingsBody,
     SettingsError,
     SettingsResponse
-} from "routes/interfaces/settings.interface";
+} from "../interfaces/settings.interface";
+
+import { User } from "../../models/user.model";
 
 export async function settingsService(
     body : SettingsBody 
