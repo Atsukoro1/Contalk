@@ -1,14 +1,11 @@
 import dotenv from "dotenv";
 
 /**
- * @async
- * @name binSearch
- * @description 
  * Recursive function that uses binary search algorithm to loop through 
  * process variables and check if variables that are required are defined
- * @param {string} toSearch String that we're searching for 
- * @param {Array<string>} field Array of strings to search in
- * @returns {Promise<Boolean>} If the element is in the array or not
+ * Param - {string} toSearch String that we're searching for 
+ * Param - {Array<string>} field Array of strings to search in
+ * Returns {Promise<Boolean>} If the element is in the array or not
  */
 async function binSearch(toSearch: string, field: Array<String>): Promise<Boolean> {
     /*
@@ -47,10 +44,8 @@ async function binSearch(toSearch: string, field: Array<String>): Promise<Boolea
 };
 
 /**
- * @async
- * @name checkForDotenvVars
- * @description Initialize dotenv and check if all variables in .env file are correctly defined
- * @returns {Promise<void>}
+ * Initialize dotenv and check if all variables in .env file are correctly defined
+ * Returns {Promise<void>}
  */
 export default async function checkForDotenvVars() : Promise<void> {
     await dotenv.config();

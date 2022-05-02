@@ -1,4 +1,5 @@
-import { User } from "models/user.model";
+// Models
+import { User } from "../../models/user.model";
 
 export interface AuthError {
     statusCode : number;

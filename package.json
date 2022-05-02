@@ -16,6 +16,7 @@
     "argon2": "^0.28.5",
     "dotenv": "^16.0.0",
     "fastify": "^3.28.0",
+    "fastify-plugin": "^3.0.1",
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.3.1",

@@ -1,12 +1,11 @@
-import fastify, { FastifyInstance, FastifyRequest, RouteOptions } from "fastify";
+// Modules
+import fastify, { FastifyInstance, RouteOptions } from "fastify";
 import fs from "fs";
 
 /**
- * @async
- * @name loadRoutes
- * @description Load route controllers from controllers folder
- * @param {FastifyInstance} server Fastify instance to insert routes into
- * @returns {Promise<void>}
+ * Load route controllers from controllers folder
+ * Param - {FastifyInstance} server Fastify instance to insert routes into
+ * Returns {Promise<void>}
  */
 async function loadRoutes(server : FastifyInstance) : Promise<void> {
     const files : Array<String> = await fs.readdirSync("./dist/routes/controllers/").filter(
@@ -23,23 +22,19 @@ async function loadRoutes(server : FastifyInstance) : Promise<void> {
 };
 
 /**
- * @async
- * @name loadMiddleware
- * @description Load middlewares, validators and other important things that we need
+ * Load middlewares, validators and other important things that we need
  * to run the whole app corectly
- * @param {FastifyInstance} server Fastify instance to insert middleware into
- * @returns {Promise<void>}
+ * Param - {FastifyInstance} server Fastify instance to insert middleware into
+ * Returns {Promise<void>}
  */
-async function loadMiddleware(server : FastifyInstance) : Promise<void> {
+async function loadMiddleware(server : FastifyInstance) : Promise<void> { 
+    server.register(require("../middleware/token.middleware"));
     server.register(require("@fastify/cors"));
 };
 
 /**
- * @default
- * @async
- * @name startWebserver
- * @description Initialize and start new Fastify instance
- * @returns {Promise<void>}
+ * Initialize and start new Fastify instance
+ * Returns {Promise<void>}
  */
 export default async function startWebserver() : Promise<void> {
     const server = fastify();
