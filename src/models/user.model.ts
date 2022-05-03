@@ -6,6 +6,7 @@ import {
 
 export interface User {
     _id: Types.ObjectId,
+    type: string,
     name: string;
     surname: string;
     phone?: string;
@@ -18,6 +19,12 @@ export interface User {
 };
 
 const userSchema : Schema<User> = new Schema({
+    type: {
+        type: String,
+        enum: ['USER', 'ADMIN', 'BANNED'],
+        default: 'USER'
+    },
+
     name: {
         type: String,
         min: 3,

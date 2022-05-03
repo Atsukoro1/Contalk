@@ -29,6 +29,7 @@ async function loadRoutes(server : FastifyInstance) : Promise<void> {
  */
 async function loadMiddleware(server : FastifyInstance) : Promise<void> { 
     server.register(require("../middleware/token.middleware"));
+    server.register(require("../middleware/restrict.middleware"));
     server.register(require("@fastify/cors"));
 };
 
