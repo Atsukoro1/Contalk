@@ -30,6 +30,39 @@ function cookieParser(cookieString : string) : Record<string, any> | null {
 }
 
 /**
+ * Parse cookies, check token one, verify it and return back user or
+ * error in case something happened
+ * Param - {FastifyRequest} req - Fastify request
+ * Param - {FastifyReply} res - Fastify reply
+ * Returns - {Promise<void>}
+ */
+async function handleCookies(
+    req : FastifyRequest, 
+    res : FastifyReply
+) : Promise<void> {
+    if(req.url.includes('/auth')) return;
+
+    try {
+        const cookies : Record<string, any> | null = cookieParser(req.headers.cookie);
+        if(!cookies || !cookies['token']) throw new Error();
+
+        const payload : string | JwtPayload = await jwt.verify(cookies['token'], process.env.JWT_SECRET);
+
+        const existingUser : User = await User.findById((<any>payload)._id);
+
+        // @ts-ignore
+        req.user = existingUser;
+
+        return;
+    } catch(err) {
+        return res.status(401).send({
+            error: "You need to provide token in order to access our services",
+            errorCode: 401
+        });
+    };
+};
+
+/**
  * Creates a fastify middleware / plugin that verifies token
  * sent from frontend and turn it into User object
  * Param - {FastifyInstance} fastify
@@ -54,23 +87,7 @@ export default fp(function(
         res : FastifyReply
     ) : Promise<void> => {
         // Exclude authentication routes from this middleware
-        if(req.url.includes('/auth')) return;
-
-        try {
-            const cookies : Record<string, any> | null = cookieParser(req.headers.cookie);
-            if(!cookies || !cookies['token']) throw new Error();
-
-            const payload : string | JwtPayload = await jwt.verify(cookies['token'], process.env.JWT_SECRET);
-
-            const existingUser : User = await User.findById((<any>payload)._id);
-
-            return;
-        } catch(err) {
-            return res.status(401).send({
-                error: "You need to provide token in order to access our services",
-                errorCode: 401
-            });
-        };
+        await handleCookies(req, res);
 
         return;
     });
