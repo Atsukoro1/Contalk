@@ -31,8 +31,7 @@ export const loginController : RouteOptions = {
     },
 
     async handler(req : FastifyRequest, res : FastifyReply) {
-        // @ts-ignore
-        const response : AuthError | AuthResponse = await loginService(req.body);
+        const response : AuthError | AuthResponse = await loginService(<any>req.body);
 
         return response;
     }
@@ -57,8 +56,7 @@ export const registerController : RouteOptions = {
     },
 
     async handler(req : FastifyRequest, res : FastifyReply) {
-        // @ts-ignore
-        const response : AuthError | AuthResponse = await registerService(req.body);
+        const response : AuthError | AuthResponse = await registerService(<any>req.body);
 
         return response;
     }

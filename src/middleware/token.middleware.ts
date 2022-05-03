@@ -50,8 +50,7 @@ async function handleCookies(
 
         const existingUser : User = await User.findById((<any>payload)._id);
 
-        // @ts-ignore
-        req.user = existingUser;
+        (<any>req).user = existingUser;
 
         return;
     } catch(err) {

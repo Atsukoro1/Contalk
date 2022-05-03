@@ -6,6 +6,7 @@ import {
     FastifyPluginOptions 
 } from "fastify";
 import fp from "fastify-plugin";
+import { User } from "user.model";
 
 /**
  * Creates a fastify middleware / plugin that restrict access from the service
@@ -14,7 +15,7 @@ import fp from "fastify-plugin";
  * Param - {FastifyPluginOptions} options
  * Param - {void} next
  * Returns {void}
- */
+ */ 
 export default fp(function(
     fastify : FastifyInstance,
     options : FastifyPluginOptions, 

@@ -18,10 +18,17 @@ export interface User {
     updatedAt: Date;
 };
 
+export enum UserType {
+    USER = 'USER',
+    ADMIN = 'ADMIN',
+    BANNED = 'BANNED',
+    RESTRICTED = 'RESTRICTED'
+};
+
 const userSchema : Schema<User> = new Schema({
     type: {
         type: String,
-        enum: ['USER', 'ADMIN', 'BANNED'],
+        enum: Object.values(UserType),
         default: 'USER'
     },
 

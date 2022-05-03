@@ -34,8 +34,7 @@ export const settingsController : RouteOptions = {
     },
 
     async handler(req : FastifyRequest, res : FastifyReply) : Promise<SettingsError | SettingsResponse> {
-        // @ts-ignore
-        const response = await settingsService(req.body, req.user);
+        const response = await settingsService(<any>req.body, (<any>req).user);
 
         return response;
     }
