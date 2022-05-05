@@ -14,9 +14,9 @@ export interface Relation {
 };
 
 export enum RelationType {
-    BLOCKED = "BLOCKED",
-    FRIEND_REQUEST = "FRIEND_REQUEST",
-    FRIENDS = "FRIENDS"
+    BLOCKED = 'BLOCKED',
+    FRIEND_REQUEST = 'FRIEND_REQUEST',
+    FRIENDS = 'FRIENDS'
 }
 
 const newRelation : Schema<Relation> = new Schema({

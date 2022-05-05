@@ -7,15 +7,17 @@ import {
 import Joi from "joi";
 import { isValidObjectId } from "mongoose";
 
-// Modules, interfaces and services
+// Models, interfaces and services
 import { 
-    ReportError,
-    ReportResponse
-} from "../interfaces/report.interface";
-import { reportService } from "../services/report.service";
+    RelationshipsError, 
+    RelationshipsResponse 
+} from "../interfaces/relationships.interface"
+import {
+    reportServiceAddFriend
+} from "../services/relationships.service";
 
 export const settingsController : RouteOptions = {
-    url: '/report', 
+    url: '/relationships/friends', 
     method: 'POST',
     schema: {
         body: Joi.object({
@@ -23,10 +25,9 @@ export const settingsController : RouteOptions = {
                 if(!isValidObjectId(value)) {
                     return helpers.message({ custom: "_id should be a valid ObjectId" });
                 } else {
-                    return true;
+                    return value;
                 }
-            }, "Check if value is a valid Mongoose ObjectId").required(),
-            reason: Joi.string().min(32).max(1024).required()
+            }, "Check if value is a valid Mongoose ObjectId").required()
         })
     },
 
@@ -34,8 +35,8 @@ export const settingsController : RouteOptions = {
         return data => schema.validate(data)
     },
 
-    async handler(req : FastifyRequest, res : FastifyReply) : Promise<ReportError | ReportResponse> {
-        const response = await reportService(<any>req.body, (<any>req).user);
+    async handler(req : FastifyRequest, res : FastifyReply) : Promise<RelationshipsError | RelationshipsResponse> {
+        const response = await reportServiceAddFriend(<any>req.body, (<any>req).user);
 
         return response;
     }

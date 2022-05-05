@@ -7,6 +7,7 @@ import {
 } from "fastify";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import fp from "fastify-plugin";
+import { isValidObjectId } from "mongoose";
 
 // Service, models & Interfaces
 import { User } from "../models/user.model";
@@ -48,7 +49,11 @@ async function handleCookies(
 
         const payload : string | JwtPayload = await jwt.verify(cookies['token'], process.env.JWT_SECRET);
 
+        if(!isValidObjectId((<any>payload)['_id'])) throw new Error();
+
         const existingUser : User = await User.findById((<any>payload)._id);
+
+        if(!existingUser) throw new Error();
 
         (<any>req).user = existingUser;
 

@@ -43,7 +43,7 @@ export default async function startWebserver() : Promise<void> {
     await loadRoutes(server);
     await loadMiddleware(server);
     
-    const PORT = process.env.PORT || 3000;
+    const PORT = process.env.PORT ?? 3000;
 
     server.listen(PORT, () => {
         console.log(`[WEBSERVER] Webserver started on port *${PORT}!`);
