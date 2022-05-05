@@ -40,9 +40,9 @@ export async function reportServiceAddFriend(
     // Find user and check if he exists or is not banned
     const receiver : User = await User.findById(body._id);
 
-    if(!receiver) {
+    if(!receiver ?? receiver.type === 'BANNED') {
         return {
-            error: "User you're trying to add does not exist",
+            error: "User you're trying to add user that does not exist",
             statusCode: 400
         };
     }
@@ -112,5 +112,40 @@ export async function reportServiceAddFriend(
         return {
             success: true
         };
+    }
+};
+
+/**
+ * Blocking user
+ * Param {RelationshipsRequestBody} body
+ * Param {User} user
+ * Returns {Promise<RelationshipsResponse | RelationshipsError>}
+ */
+ export async function reportServiceBlock(
+    body : RelationshipsRequestBody,
+    user: User
+) : Promise<RelationshipsResponse | RelationshipsError> {
+    // Find user and check if he exists or is not banned
+    const receiver : User = await User.findById(body._id);
+
+    if(!receiver ?? receiver.type === 'BANNED') {
+        return {
+            error: "User you're trying to block user that does not exist",
+            statusCode: 400
+        };
+    }
+    
+    // Check if user is sending friend request to themselves
+    if(body._id.toString() === receiver._id.toString()) {
+        return {
+            error: "You can't block yourself",
+            statusCode: 400
+        };
+    };
+    
+    const relationships : Array<Relation> = await getRelationships(receiver, user);
+
+    return {
+        success: true
     }
 };
