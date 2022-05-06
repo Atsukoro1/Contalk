@@ -7,7 +7,7 @@ import {
     RelationshipsRequestBody,
     RelationshipsResponse
 } from "../interfaces/relationships.interface";
-import { User } from "../../models/user.model";
+import { User, UserType } from "../../models/user.model";
 import { Relation } from "../../models/relation.model";
 
 /**
@@ -144,6 +144,67 @@ export async function reportServiceAddFriend(
     };
     
     const relationships : Array<Relation> = await getRelationships(receiver, user);
+
+    // Check if user is trying to block someone they already blocked
+    if(relationships.find(el => el.type === 'BLOCKED' && el.creator == user._id)) {
+        return {
+            error: "You can't blocked someone you already blocked!",
+            statusCode: 400
+        };
+    };
+
+    // Check if request author is already friend with target user and remove the friendship
+    if(relationships.find(el => el.type === 'FRIENDS' && el.creator === user._id)) {
+        await Relation.deleteMany({ $or: 
+            [
+                {
+                    type: 'FRIENDS',
+                    creator: user._id,
+                    target: receiver._id
+                },
+                {
+                    type: 'FRIENDS',
+                    creator: receiver._id,
+                    target: user._id
+                }
+            ] 
+        });
+    };
+
+    /* 
+        Check if one of the users created a friend request with the opponent
+        and remove all the friend request from database
+    */
+    if(relationships.find(el => el.type === 'FRIEND_REQUEST')) {
+        await Relation.deleteMany({
+            $or: [
+                {
+                    type: 'FRIEND_REQUEST',
+                    creator: user._id,
+                    target: receiver._id
+                },
+                {
+                    type: 'FRIEND_REQUEST',
+                    creator: receiver._id,
+                    target: user._id
+                }
+            ]
+        });
+    };
+
+    // Create the block schemas and insert it
+    await Relation.insertMany([
+        {
+            type: 'BLOCKED',
+            creator: receiver._id,
+            target: user._id
+        },
+        {
+            type: 'BLOCKED',
+            creator: user._id,
+            target: receiver._id
+        }
+    ]);
 
     return {
         success: true
