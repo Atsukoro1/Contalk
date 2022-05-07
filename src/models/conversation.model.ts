@@ -9,7 +9,7 @@ export interface Conversation {
     title?: string;
     creator: Types.ObjectId;
     recipient: Types.ObjectId;
-    channedId: number;
+    lastMessage: Types.ObjectId;
     createdAt: Date;
     updatedAt: Date;
 };
@@ -25,15 +25,19 @@ const conversationSchema : Schema<Conversation> = new Schema({
     creator: {
         type: Schema.Types.ObjectId,
         required: true,
-        ref: "User",
-        unique: false
+        ref: "User"
     },
 
     recipient: {
         type: Schema.Types.ObjectId,
+        required: true,
+        ref: "User"
+    },
+
+    lastMessage: {
+        type: Schema.Types.ObjectId, 
         required: false,
-        ref: "User",
-        unique: false
+        ref: "Message"
     }
 }, {
     timestamps: true,
