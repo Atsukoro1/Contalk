@@ -16,8 +16,8 @@ import { Relation } from "../../models/relation.model";
  * Param {User} user - user sending the request 
  * Returns {Promise<Array<Relation>>}
  */
-async function getRelationships(receiver : User, user : User) : Promise<Array<Relation>> {
-    const relationships : Array<Relation> = await Relation.find({ 
+async function getRelationships(receiver : User, user : User) : Promise<Array<Relation & Document>> {
+    const relationships : Array<Relation & Document> = await Relation.find({ 
         $or: [ 
             { creator: new Types.ObjectId(receiver._id), target: new Types.ObjectId(user._id) }, 
             { creator: new Types.ObjectId(user._id), target: new Types.ObjectId(receiver._id) } 
@@ -48,14 +48,14 @@ export async function reportServiceAddFriend(
     }
 
     // Check if user is sending friend request to themselves
-    if(body._id.toString() === receiver._id.toString()) {
+    if(body._id.toString() === user._id.toString()) {
         return {
             error: "You can't send a friend request to yourself",
             statusCode: 400
         };
     };
 
-    const relationships : Array<Relation> = await getRelationships(receiver, user);
+    const relationships : Array<Relation & Document> = await getRelationships(receiver, user);
 
     // Check if request author already sent a friend request to opponent
     if(relationships.find(el => el.type === 'FRIEND_REQUEST' && el.creator == user._id)) return {
@@ -116,6 +116,51 @@ export async function reportServiceAddFriend(
 };
 
 /**
+ * Decline friend request sent by another user
+ * Param {RelationshipsRequestBody} body 
+ * Param {User} user
+ * Returns {Promise<RelationshipsResponse | RelationshipsError>}
+ */
+export async function reportServiceDeclineFriendRequest(
+    body : RelationshipsRequestBody,
+    user: User
+) : Promise<RelationshipsResponse | RelationshipsError> {
+    // Find user and check if he exists or is not banned
+    const receiver : User = await User.findById(body._id);
+    if(!receiver ?? receiver.type === 'BANNED') {
+        return {
+            error: "User from whom you're trying to decline request does not exists or is banned",
+            statusCode: 400
+        };
+    };
+
+    // Check if user is sending friend request to themselves
+    if(body._id.toString() === user._id.toString()) {
+        return {
+            error: "You can't decline friend request from yourself",
+            statusCode: 400
+        };
+    };
+
+    const relationships : Array<Relation & Document> = await getRelationships(receiver, user);
+
+    // Check if target user sent friend request to the request author
+    if(!relationships.find(el => el.type === 'FRIEND_REQUEST' && el.target == user._id)) {
+        return {
+            error: "This user didn't send you friend request",
+            statusCode: 400
+        };
+    };
+
+    // Delete the friend request from target user because request was declined
+    await relationships.find(el => el.type === 'FRIEND_REQUEST' && el.creator == receiver._id).delete()
+
+    return {
+        success: true
+    };
+};
+
+/**
  * Blocking user
  * Param {RelationshipsRequestBody} body
  * Param {User} user
@@ -130,20 +175,20 @@ export async function reportServiceAddFriend(
 
     if(!receiver ?? receiver.type === 'BANNED') {
         return {
-            error: "User you're trying to block user that does not exist",
+            error: "User you're trying to block does not exist",
             statusCode: 400
         };
     }
     
     // Check if user is sending friend request to themselves
-    if(body._id.toString() === receiver._id.toString()) {
+    if(body._id.toString() === user._id.toString()) {
         return {
             error: "You can't block yourself",
             statusCode: 400
         };
     };
     
-    const relationships : Array<Relation> = await getRelationships(receiver, user);
+    const relationships : Array<Relation & Document> = await getRelationships(receiver, user);
 
     // Check if user is trying to block someone they already blocked
     if(relationships.find(el => el.type === 'BLOCKED' && el.creator == user._id)) {
@@ -193,20 +238,58 @@ export async function reportServiceAddFriend(
     };
 
     // Create the block schemas and insert it
-    await Relation.insertMany([
-        {
-            type: 'BLOCKED',
-            creator: receiver._id,
-            target: user._id
-        },
-        {
-            type: 'BLOCKED',
-            creator: user._id,
-            target: receiver._id
-        }
-    ]);
+    await new Relation({
+        type: 'BLOCKED',
+        creator: user._id,
+        target: receiver._id
+    }).save();
 
     return {
         success: true
     }
+};
+
+/**
+ * Unblock blocked user
+ * Param {RelationshipsRequestBody} body
+ * Param {User} user
+ * Returns {Promise<RelationshipsResponse | RelationshipsError>}
+ */
+ export async function reportServiceUnblock(
+    body : RelationshipsRequestBody,
+    user: User
+) : Promise<RelationshipsResponse | RelationshipsError> {
+    // Find user and check if he exists or is not banned
+    const receiver : User & Document = await User.findById(body._id);
+
+    if(!receiver ?? receiver.type === 'BANNED') {
+        return {
+            error: "User you're trying to block does not exist",
+            statusCode: 400
+        };
+    }
+    
+    // Check if user is removing block from themselves (they cannot)
+    if(body._id.toString() === user._id.toString()) {
+        return {
+            error: "You can't unblock yourself",
+            statusCode: 400
+        };
+    };
+
+    const relationships : Array<Relation & Document> = await getRelationships(receiver, user);
+
+    const authorBlocked = relationships.find(el => el.type === 'BLOCKED' && el.creator == user._id);
+    if(!authorBlocked) {
+        return {
+            error: "You didn't block this user!",
+            statusCode: 400
+        };
+    };
+
+    await authorBlocked.delete();
+
+    return {
+        success: true
+    };
 };

@@ -31,6 +31,8 @@ export default fp(function(
         req : FastifyRequest,
         res : FastifyReply
     ) : Promise<void> => {
+        if(req.url.includes('/auth')) return;
+        
         if((<any>req).user.type === 'BANNED') return res.status(401).send({
             error: "You have been prohibited from using our service",
             statusCode: 401
