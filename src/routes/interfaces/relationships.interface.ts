@@ -1,7 +1,7 @@
-import { ObjectId } from "mongoose";
+import { Types } from "mongoose";
 
 export interface RelationshipsRequestBody {
-    _id: ObjectId
+    _id: Types.ObjectId
 };
 
 export interface RelationshipsResponse {
