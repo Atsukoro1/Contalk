@@ -15,6 +15,10 @@ import {
     settingsService 
 } from "../services/settings.service";
 
+function schemaValidator({ schema } : any) {
+    return (data : any) => schema.validate(data);
+};
+
 export const settingsController : RouteOptions = {
     url: '/settings', 
     method: 'POST',
@@ -28,10 +32,7 @@ export const settingsController : RouteOptions = {
             newPassword: Joi.string().optional().min(8).max(1024)
         })
     },
-
-    validatorCompiler: ({ schema } : any) => {
-        return data => schema.validate(data)
-    },
+    validatorCompiler: schemaValidator,
 
     async handler(req : FastifyRequest, res : FastifyReply) : Promise<SettingsError | SettingsResponse> {
         const response = await settingsService(<any>req.body, (<any>req).user);

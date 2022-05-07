@@ -14,6 +14,10 @@ import {
 } from "../interfaces/report.interface";
 import { reportService } from "../services/report.service";
 
+function schemaValidator({ schema } : any) {
+    return (data : any) => schema.validate(data);
+};
+
 export const settingsController : RouteOptions = {
     url: '/report', 
     method: 'POST',
@@ -29,10 +33,7 @@ export const settingsController : RouteOptions = {
             reason: Joi.string().min(32).max(1024).required()
         })
     },
-
-    validatorCompiler: ({ schema } : any) => {
-        return data => schema.validate(data)
-    },
+    validatorCompiler: schemaValidator,
 
     async handler(req : FastifyRequest, res : FastifyReply) : Promise<ReportError | ReportResponse> {
         const response = await reportService(<any>req.body, (<any>req).user);

@@ -16,6 +16,10 @@ import {
     AuthResponse
 } from "../interfaces/auth.interface";
 
+function schemaValidator({ schema } : any) {
+    return (data : any) => schema.validate(data);
+};
+
 export const loginController : RouteOptions = {
     method: 'POST',
     url: '/auth/login',
@@ -25,10 +29,7 @@ export const loginController : RouteOptions = {
             password: Joi.string().min(8).max(255).required()
         })
     },
-
-    validatorCompiler: ({ schema } : any) => {
-        return data => schema.validate(data)
-    },
+    validatorCompiler: schemaValidator,
 
     async handler(req : FastifyRequest, res : FastifyReply) {
         const response : AuthError | AuthResponse = await loginService(<any>req.body);
@@ -50,10 +51,7 @@ export const registerController : RouteOptions = {
             phone: Joi.string().required().min(9).max(32)
         })
     },
-
-    validatorCompiler: ({ schema } : any) => {
-        return data => schema.validate(data)
-    },
+    validatorCompiler: schemaValidator,
 
     async handler(req : FastifyRequest, res : FastifyReply) {
         const response : AuthError | AuthResponse = await registerService(<any>req.body);
