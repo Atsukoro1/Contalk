@@ -19,6 +19,8 @@ export interface Message {
     createdAt: Date;
     updatedAt: Date;
     isUpdated: boolean;
+    deletedFromSender: boolean;
+    deletedFromReceiver: boolean;
 };
 
 const messageSchema : Schema<Message> = new Schema({
@@ -50,6 +52,16 @@ const messageSchema : Schema<Message> = new Schema({
     },
 
     isUpdated: {
+        type: Boolean,
+        default: false
+    },
+
+    deletedFromSender: {
+        type: Boolean, 
+        default: false
+    },
+
+    deletedFromReceiver: {
         type: Boolean,
         default: false
     }

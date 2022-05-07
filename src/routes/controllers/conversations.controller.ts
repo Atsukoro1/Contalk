@@ -25,7 +25,7 @@ export const conversationCreateController : RouteOptions = {
     validatorCompiler: schemaValidator,
 
     async handler(req : FastifyRequest, res : FastifyReply) {
-        const response : ConversationError | ConversationResponse = await conversationCreateService(<any>req.body);
+        const response : ConversationError | ConversationResponse = await conversationCreateService(<any>req.body, (<any>req).user);
 
         return response;
     }
