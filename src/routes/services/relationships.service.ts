@@ -270,7 +270,7 @@ export async function reportServiceDeclineFriendRequest(
     }
     
     // Check if user is removing block from themselves (they cannot)
-    if(body._id.toString() === user._id.toString()) {
+    if(user._id.equals(body._id)) {
         return {
             error: "You can't unblock yourself",
             statusCode: 400
@@ -279,7 +279,7 @@ export async function reportServiceDeclineFriendRequest(
 
     const relationships : Array<Relation & Document> = await getRelationships(receiver, user);
 
-    const authorBlocked = relationships.find(el => el.type === 'BLOCKED' && el.creator == user._id);
+    const authorBlocked = relationships.find(el => el.type === 'BLOCKED' && user._id.equals(el.creator));
     if(!authorBlocked) {
         return {
             error: "You didn't block this user!",

@@ -22,6 +22,14 @@ export async function conversationCreateService(
     body : ConversationCreateBody,
     user : User
 ) : Promise<ConversationError | ConversationResponse> {
+    // Check if request author is trying to start conversation with themselves
+    if(user._id.equals(body._id)) {
+        return {
+            error: "You can't start conversation with yourself!",
+            statusCode: 400
+        };
+    };
+
     // Check if user that logged user is trying to start conversation with exists
     const recipient : User & Document = await User.findById(body._id);
     if(!recipient ?? recipient.type === 'BANNED') {
@@ -32,7 +40,7 @@ export async function conversationCreateService(
     };
 
     // Find all relations between those two users
-    const blocked : Array<Relation & Document> = await Relation.find({
+    const relationships : Array<Relation & Document> = await Relation.find({
         $or: [
             {
                 creator: recipient._id,
@@ -46,7 +54,7 @@ export async function conversationCreateService(
     });
 
     // Check if there is some block record in database 
-    if(blocked.find(el => el.type === 'BLOCKED')) {
+    if(relationships.find(el => el.type === 'BLOCKED')) {
         return {
             error: "You can't start conversation with this user!",
             statusCode: 400
@@ -54,10 +62,31 @@ export async function conversationCreateService(
     };
 
     // Check if these two users are friends
-    const friendRec = [blocked.find(el => el.type === 'FRIENDS')].length;
+    const friendRec : number = relationships.filter(el => el.type === 'FRIENDS').length;
     if(friendRec != 2) {
         return {
             error: "You can't start conversation with someone you're not friends with.",
+            statusCode: 400
+        };
+    };
+
+    // Check if user already have a conversation 
+    const existingCon : Relation | null = await Conversation.findOne({
+        $or: [
+            {
+                creator: recipient._id,
+                target: user._id
+            },
+            {
+                creator: user._id,
+                target: recipient._id
+            }
+        ]
+    });
+
+    if(existingCon) {
+        return {
+            error: "You already have a conversation with this user!",
             statusCode: 400
         };
     };
