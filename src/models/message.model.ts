@@ -39,7 +39,7 @@ const messageSchema : Schema<Message> = new Schema({
     },
 
     conversation: {
-        types: Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         required: true,
         ref: "Conversation",
         unique: false

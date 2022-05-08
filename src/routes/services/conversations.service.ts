@@ -1,16 +1,18 @@
 // Modules & External dependencies
-import { Document } from "mongoose";
+import { Document, Types } from "mongoose";
 
 // Interfaces, services & Models
 import {
     ConversationError,
     ConversationResponse,
     ConversationCreateBody,
-    ConversationChangeTitleBody
+    ConversationChangeTitleBody,
+    ConversationSendMessageBody
 } from "../interfaces/conversation.interface"
 import { User } from "../../models/user.model";
 import { Relation } from "../../models/relation.model";
 import { Conversation } from "../../models/conversation.model";
+import { Message } from "../../models/message.model";
 
 /**
  * Creates a new conversation to send messages into for two users
@@ -131,6 +133,50 @@ export async function conversationChangeTitleService(
     // Change title to whatever the user wants to and save
     conversation.title = body.title;
     await conversation.save();
+
+    return {
+        success: true
+    }
+};
+
+/**
+ * Send a message to specific conversation
+ * Param {ConversationC} body 
+ * Param {User} user
+ * Returns Promise<ConversationError | ConversationResponse> 
+ */
+export async function conversationSendMessage(
+    body : ConversationSendMessageBody,
+    user : User
+) : Promise<ConversationError | ConversationResponse> {
+    // Find conversation by id provided in the request body and check if it exists
+    const conversation : Conversation & Document = await Conversation.findById(body._id);
+    if(!conversation) {
+        return {
+            error: "This conversation does not exist!",
+            statusCode: 400
+        }
+    };
+
+    // Check if user has rights to post into the conversation (is creator or receiver)
+    if(!conversation.creator.equals(user._id) && conversation.recipient.equals(user._id)) {
+        return {
+            error: "You don't have rights to post into this conversation",
+            statusCode: 400
+        };
+    };
+
+    // Create a new message and set it as last in current conversation
+    const newMessage = new Message({
+        content: body.textContent, 
+        conversation: new Types.ObjectId(body._id),
+        author: user._id
+    });
+
+    await newMessage.save();
+    await conversation.updateOne({
+        lastMessage: newMessage._id
+    });
 
     return {
         success: true

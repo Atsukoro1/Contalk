@@ -10,10 +10,15 @@ export interface ConversationError {
 }
 
 export interface ConversationCreateBody {
-    _id: Types.ObjectId
+    _id: Types.ObjectId;
 }
 
 export interface ConversationChangeTitleBody {
-    _id: Types.ObjectId,
+    _id: Types.ObjectId;
     title: string;
+}
+
+export interface ConversationSendMessageBody {
+    _id: Types.ObjectId;
+    textContent: string;
 }
