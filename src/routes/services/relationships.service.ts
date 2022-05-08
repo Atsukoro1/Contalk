@@ -48,7 +48,7 @@ export async function reportServiceAddFriend(
     }
 
     // Check if user is sending friend request to themselves
-    if(body._id.toString() === user._id.toString()) {
+    if(user._id.equals(body._id)) {
         return {
             error: "You can't send a friend request to yourself",
             statusCode: 400
@@ -58,7 +58,7 @@ export async function reportServiceAddFriend(
     const relationships : Array<Relation & Document> = await getRelationships(receiver, user);
 
     // Check if request author already sent a friend request to opponent
-    if(relationships.find(el => el.type === 'FRIEND_REQUEST' && el.creator == user._id)) return {
+    if(relationships.find(el => el.type === 'FRIEND_REQUEST' && el.creator.equals(user._id))) return {
         error: "You already sent friend request to this user!",
         statusCode: 400
     };
@@ -79,7 +79,7 @@ export async function reportServiceAddFriend(
         Check if request sender's opponent already sent a friend request
         and accept it if so, if not make a new one.
     */
-    if(relationships.find(el => el.type === 'FRIEND_REQUEST' && el.creator == receiver._id)) {
+    if(relationships.find(el => el.type === 'FRIEND_REQUEST' && el.creator.equals(receiver._id))) {
         await Relation.findOneAndDelete(
             { type: 'FRIEND_REQUEST', creator: receiver._id }
         );
@@ -135,7 +135,7 @@ export async function reportServiceDeclineFriendRequest(
     };
 
     // Check if user is sending friend request to themselves
-    if(body._id.toString() === user._id.toString()) {
+    if(user._id.equals(body._id)) {
         return {
             error: "You can't decline friend request from yourself",
             statusCode: 400
@@ -145,7 +145,7 @@ export async function reportServiceDeclineFriendRequest(
     const relationships : Array<Relation & Document> = await getRelationships(receiver, user);
 
     // Check if target user sent friend request to the request author
-    if(!relationships.find(el => el.type === 'FRIEND_REQUEST' && el.target == user._id)) {
+    if(!relationships.find(el => el.type === 'FRIEND_REQUEST' && el.target.equals(user._id))) {
         return {
             error: "This user didn't send you friend request",
             statusCode: 400
@@ -153,7 +153,7 @@ export async function reportServiceDeclineFriendRequest(
     };
 
     // Delete the friend request from target user because request was declined
-    await relationships.find(el => el.type === 'FRIEND_REQUEST' && el.creator == receiver._id).delete()
+    await relationships.find(el => el.type === 'FRIEND_REQUEST' && el.creator.equals(receiver._id)).delete()
 
     return {
         success: true
@@ -181,7 +181,7 @@ export async function reportServiceDeclineFriendRequest(
     }
     
     // Check if user is sending friend request to themselves
-    if(body._id.toString() === user._id.toString()) {
+    if(user._id.equals(body._id)) {
         return {
             error: "You can't block yourself",
             statusCode: 400
@@ -191,7 +191,7 @@ export async function reportServiceDeclineFriendRequest(
     const relationships : Array<Relation & Document> = await getRelationships(receiver, user);
 
     // Check if user is trying to block someone they already blocked
-    if(relationships.find(el => el.type === 'BLOCKED' && el.creator == user._id)) {
+    if(relationships.find(el => el.type === 'BLOCKED' && el.creator.equals(user._id))) {
         return {
             error: "You can't blocked someone you already blocked!",
             statusCode: 400
@@ -199,7 +199,7 @@ export async function reportServiceDeclineFriendRequest(
     };
 
     // Check if request author is already friend with target user and remove the friendship
-    if(relationships.find(el => el.type === 'FRIENDS' && el.creator === user._id)) {
+    if(relationships.find(el => el.type === 'FRIENDS' && el.creator.equals(user._id))) {
         await Relation.deleteMany({ $or: 
             [
                 {
