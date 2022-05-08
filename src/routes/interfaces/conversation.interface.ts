@@ -12,3 +12,8 @@ export interface ConversationError {
 export interface ConversationCreateBody {
     _id: Types.ObjectId
 }
+
+export interface ConversationChangeTitleBody {
+    _id: Types.ObjectId,
+    title: string;
+}

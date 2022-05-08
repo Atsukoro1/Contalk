@@ -13,6 +13,19 @@ export const createConversationValidator = {
     })
 }
 
+export const conversationChangeTitleValidator = {
+    body: Joi.object({
+        _id: Joi.string().custom((value, helpers) => {
+            if(!isValidObjectId(value)) {
+                return helpers.message({ custom: "_id should be a valid ObjectId" });
+            } else {
+                return value;
+            }
+        }, "Check if value is a valid Mongoose ObjectId").required(),
+        title: Joi.string().max(40).min(3).required()
+    })
+};
+
 export function schemaValidator({ schema } : any) {
     return (data : any) => schema.validate(data);
 };

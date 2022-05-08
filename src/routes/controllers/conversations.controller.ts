@@ -8,14 +8,16 @@ import {
 // Services, models, validators and interfaces
 import {
     schemaValidator,
-    createConversationValidator
+    createConversationValidator,
+    conversationChangeTitleValidator
 } from "../validators/conversation.validators";
 import {
     ConversationError,
     ConversationResponse
 } from "../interfaces/conversation.interface"
 import {
-    conversationCreateService
+    conversationCreateService,
+    conversationChangeTitleService
 } from "../services/conversations.service"
 
 export const conversationCreateController : RouteOptions = {
@@ -26,6 +28,19 @@ export const conversationCreateController : RouteOptions = {
 
     async handler(req : FastifyRequest, res : FastifyReply) {
         const response : ConversationError | ConversationResponse = await conversationCreateService(<any>req.body, (<any>req).user);
+
+        return response;
+    }
+};
+
+export const conversationChangeTitleController : RouteOptions = {
+    method: 'PATCH',
+    url: '/conversation/title',
+    schema: conversationChangeTitleValidator,
+    validatorCompiler: schemaValidator,
+
+    async handler(req : FastifyRequest, res : FastifyReply) {
+        const response : ConversationError | ConversationResponse = await conversationChangeTitleService(<any>req.body, (<any>req).user);
 
         return response;
     }
