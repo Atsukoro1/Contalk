@@ -31,24 +31,33 @@ export async function conversationCreateService(
         };
     };
 
-    // Check if either logged user or recipient sent a block request
+    // Find all relations between those two users
     const blocked : Array<Relation & Document> = await Relation.find({
         $or: [
             {
-                type: 'BLOCKED',
                 creator: recipient._id,
                 target: user._id
             },
             {
-                type: 'BLOCKED',
                 creator: user._id,
                 target: recipient._id
             }
         ]
     });
-    if(blocked) {
+
+    // Check if there is some block record in database 
+    if(blocked.find(el => el.type === 'BLOCKED')) {
         return {
             error: "You can't start conversation with this user!",
+            statusCode: 400
+        };
+    };
+
+    // Check if these two users are friends
+    const friendRec = [blocked.find(el => el.type === 'FRIENDS')].length;
+    if(friendRec != 2) {
+        return {
+            error: "You can't start conversation with someone you're not friends with.",
             statusCode: 400
         };
     };
@@ -83,7 +92,7 @@ export async function conversationChangeTitleService(
     };
 
     // Check if request author does have rights to edit conversation title (is in the conversation)
-    if(conversation.recipient !== user._id && conversation.creator !== user._id) {
+    if(!conversation.recipient.equals(user._id) && !conversation.creator.equals(user._id)) {
         return {
             error: "You don't have permissions to edit title of this conversation",
             statusCode: 400
