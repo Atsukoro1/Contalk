@@ -242,10 +242,54 @@ export async function conversationDeleteMessage(
     };
 };
 
+/**
+ * Edit message in specific conversation
+ * Param {ConversationEditMessageBody} body 
+ * Param {User} user 
+ * Returns {Promise<ConversationError | ConversationResponse>}
+ */
 export async function conversationMessageEditService(
     body : ConversationEditMessageBody,
     user : User
 ) : Promise<ConversationError | ConversationResponse> {
+    // Find conversation and check if it exists
+    const conversation : Conversation & Document | null = await Conversation.findById(body._id);
+    if(!conversation) {
+        return {
+            error: "This conversation does not exist!",
+            statusCode: 400
+        };
+    };
+
+    // Check if user has rights to make changes in this conversation
+    if(!user._id.equals(conversation.creator) && !user._id.equals(conversation.recipient)) {
+        return {
+            error: "You don't have permissions to manage things in this conversation!",
+            statusCode: 400
+        };
+    };
+
+    // Find message and check if it exists
+    const message : Message & Document | null = await Message.findById(body.messageId);
+    if(!message) {
+        return {
+            error: "This message does not exist!",
+            statusCode: 400
+        };
+    };
+
+    // Check is request author is also the author of the message
+    if(!message.author.equals(user._id)) {
+        return {
+            error: "You don't have permissions to make changes to this message!",
+            statusCode: 400
+        };
+    };
+
+    // Change content and save the message
+    message.content = body.textContent;
+    await message.save();
+
     return {
         success: true
     };
