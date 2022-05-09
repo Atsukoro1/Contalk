@@ -22,3 +22,8 @@ export interface ConversationSendMessageBody {
     _id: Types.ObjectId;
     textContent: string;
 }
+
+export interface ConversationDeleteMessageBody {
+    _id: Types.ObjectId,
+    messageId: Types.ObjectId
+}

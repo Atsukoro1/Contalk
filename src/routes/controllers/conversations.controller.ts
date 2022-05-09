@@ -10,7 +10,8 @@ import {
     schemaValidator,
     createConversationValidator,
     conversationChangeTitleValidator,
-    conversationMessageSendValidator
+    conversationMessageSendValidator,
+    conversationMessageDeleteValidator
 } from "../validators/conversation.validators";
 import {
     ConversationError,
@@ -19,7 +20,8 @@ import {
 import {
     conversationCreateService,
     conversationChangeTitleService,
-    conversationSendMessage
+    conversationSendMessage,
+    conversationDeleteMessage
 } from "../services/conversations.service"
 
 export const conversationCreateController : RouteOptions = {
@@ -50,12 +52,25 @@ export const conversationChangeTitleController : RouteOptions = {
 
 export const messageSendController : RouteOptions = {
     method: 'POST',
-    url: '/conversation/messagfe',
+    url: '/conversation/message',
     schema: conversationMessageSendValidator,
     validatorCompiler: schemaValidator,
 
     async handler(req : FastifyRequest, res : FastifyReply) {
         const response : ConversationError | ConversationResponse = await conversationSendMessage(<any>req.body, (<any>req).user);
+
+        return response;
+    }
+};
+
+export const messageDeleteController : RouteOptions = {
+    method: 'DELETE',
+    url: '/conversation/message',
+    schema: conversationMessageDeleteValidator,
+    validatorCompiler: schemaValidator,
+
+    async handler(req : FastifyRequest, res : FastifyReply) {
+        const response : ConversationError | ConversationResponse = await conversationDeleteMessage(<any>req.body, (<any>req).user);
 
         return response;
     }

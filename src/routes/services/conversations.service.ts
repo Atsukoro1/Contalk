@@ -7,7 +7,8 @@ import {
     ConversationResponse,
     ConversationCreateBody,
     ConversationChangeTitleBody,
-    ConversationSendMessageBody
+    ConversationSendMessageBody,
+    ConversationDeleteMessageBody
 } from "../interfaces/conversation.interface"
 import { User } from "../../models/user.model";
 import { Relation } from "../../models/relation.model";
@@ -181,4 +182,61 @@ export async function conversationSendMessage(
     return {
         success: true
     }
+};
+
+/**
+ * Delete message from specific conversation
+ * Param {ConversationDeleteMessageBody} body 
+ * Param {User} user 
+ * Returns {Promise<ConversationError | ConversationResponse>}
+ */
+export async function conversationDeleteMessage(
+    body : ConversationDeleteMessageBody,
+    user : User
+) : Promise<ConversationError | ConversationResponse> {
+    // Find conversation and check if it exists
+    const conversation : Conversation & Document | null = await Conversation.findById(body._id);
+    if(!conversation) {
+        return {
+            error: "This conversation does not exist!",
+            statusCode: 400
+        };
+    };
+
+    // Check if user has rights to make changes in this conversation
+    if(!user._id.equals(conversation.creator) && !user._id.equals(conversation.recipient)) {
+        return {
+            error: "You don't have permissions to manage things in this conversation!",
+            statusCode: 400
+        };
+    };
+
+    // Find message and check if it exists
+    const message : Message & Document | null = await Message.findById(body.messageId);
+    if(!message) {
+        return {
+            error: "This message does not exist!",
+            statusCode: 400
+        };
+    };
+
+    /*
+        We're not deleting the message from database completely in order to make it
+        fully tracable when someone reports other user, because of that, it's not possible
+        for the user to make a message completely dissapear
+    */
+    if(message.author.equals(user._id) && !message.deletedFromSender) {
+        // Message author is also user that made the request, set the delete from sender property
+        message.deletedFromSender = true;
+        await message.save();
+
+    } else if (!message.author.equals(user._id) && !message.deletedFromReceiver) {
+        // Message author is the receiver of the message, set the delete from receiver property
+        message.deletedFromReceiver = true;
+        await message.save();
+    };
+
+    return {
+        success: true
+    };
 };
