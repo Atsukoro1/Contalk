@@ -8,7 +8,8 @@ import {
     ConversationCreateBody,
     ConversationChangeTitleBody,
     ConversationSendMessageBody,
-    ConversationDeleteMessageBody
+    ConversationDeleteMessageBody,
+    ConversationEditMessageBody
 } from "../interfaces/conversation.interface"
 import { User } from "../../models/user.model";
 import { Relation } from "../../models/relation.model";
@@ -236,6 +237,15 @@ export async function conversationDeleteMessage(
         await message.save();
     };
 
+    return {
+        success: true
+    };
+};
+
+export async function conversationMessageEditService(
+    body : ConversationEditMessageBody,
+    user : User
+) : Promise<ConversationError | ConversationResponse> {
     return {
         success: true
     };

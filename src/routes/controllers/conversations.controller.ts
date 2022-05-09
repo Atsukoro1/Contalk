@@ -11,7 +11,8 @@ import {
     createConversationValidator,
     conversationChangeTitleValidator,
     conversationMessageSendValidator,
-    conversationMessageDeleteValidator
+    conversationMessageDeleteValidator,
+    conversationMessageEditValidator
 } from "../validators/conversation.validators";
 import {
     ConversationError,
@@ -21,7 +22,8 @@ import {
     conversationCreateService,
     conversationChangeTitleService,
     conversationSendMessage,
-    conversationDeleteMessage
+    conversationDeleteMessage,
+    conversationMessageEditService
 } from "../services/conversations.service"
 
 export const conversationCreateController : RouteOptions = {
@@ -71,6 +73,19 @@ export const messageDeleteController : RouteOptions = {
 
     async handler(req : FastifyRequest, res : FastifyReply) {
         const response : ConversationError | ConversationResponse = await conversationDeleteMessage(<any>req.body, (<any>req).user);
+
+        return response;
+    }
+};
+
+export const messageEditController : RouteOptions = {
+    method: 'PATCH',
+    url: '/conversation/message',
+    schema: conversationMessageEditValidator,
+    validatorCompiler: schemaValidator,
+
+    async handler(req : FastifyRequest, res : FastifyReply) {
+        const response : ConversationError | ConversationResponse = await conversationMessageEditService(<any>req.body, (<any>req).user);
 
         return response;
     }
