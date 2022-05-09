@@ -1,5 +1,5 @@
 // Modules
-import fastify, { FastifyInstance, RouteOptions } from "fastify";
+import fastify, { FastifyInstance, FastifyRequest, RouteOptions, FastifyReply } from "fastify";
 import fs from "fs";
 
 /**
@@ -8,16 +8,43 @@ import fs from "fs";
  * Returns {Promise<void>}
  */
 async function loadRoutes(server : FastifyInstance) : Promise<void> {
+    /*
+        Filter files to fetch and return only files with .js suffix, compiler turns our typescript files
+        into regular javascript because otherwise our compiler would not be able to run it
+    */
     const files : Array<String> = await fs.readdirSync("./dist/routes/controllers/").filter(
         el => el.endsWith('.js')
     );
     
+    // Loop through every file and register each route from array as fastify route controller
     files.forEach(async file => {
-        const content : Array<RouteOptions> = require(`../routes/controllers/${file}`);
-        
-        Object.keys(content).forEach((el : any) : void => {
-            server.route(content[el]);
-        });
+        try {
+            const content : Array<RouteOptions> = require(`../routes/controllers/${file}`);
+
+            content.forEach(route => {
+                server.route({
+                    url: route.url,
+                    method: route.method,
+                    schema: route.schema,
+
+                    validatorCompiler: function schemaValidator({ schema } : any) {
+                        return (data : any) => schema.validate(data);
+                    },
+
+                    async handler(req : FastifyRequest, res : FastifyReply) : Promise<void> {
+                        const response = await (<any>route).service(req.body, (<any>req).user);
+
+                        return response;
+                    }
+                });
+
+                console.log(`[ROUTES] Succefully registered route {${route.method}} -> ${route.url}`);
+            });
+
+        } catch(err) {
+            console.log("[ROUTES] Error while fetching route from file -> " + file)
+            return;
+        }
     });
 };
 
