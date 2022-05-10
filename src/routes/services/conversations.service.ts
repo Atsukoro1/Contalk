@@ -1,16 +1,8 @@
 // Modules & External dependencies
 import { Document, Types } from "mongoose";
+import { Socket } from "socket.io";
 
 // Interfaces, services & Models
-import {
-    ConversationError,
-    ConversationResponse,
-    ConversationCreateBody,
-    ConversationChangeTitleBody,
-    ConversationSendMessageBody,
-    ConversationDeleteMessageBody,
-    ConversationEditMessageBody
-} from "../interfaces/conversation.interface"
 import { User } from "../../models/user.model";
 import { Relation } from "../../models/relation.model";
 import { Conversation } from "../../models/conversation.model";
@@ -28,8 +20,9 @@ import { connectedUsers } from "../../loaders/websocketLoader";
  * @returns {Promise<ConversationError | ConversationResponse>}
  */
 export async function conversationCreateService(
-    body : ConversationCreateBody,
-    user : User
+    body: ConversationCreateBody,
+    user: User,
+    socket: Socket
 ) : Promise<ConversationError | ConversationResponse> {
     // Check if request author is trying to start conversation with themselves
     if(user._id.equals(body._id)) {
@@ -119,8 +112,9 @@ export async function conversationCreateService(
  * @returns {Promise<ConversationError | ConversationResponse>}
  */
 export async function conversationChangeTitleService(
-    body : ConversationChangeTitleBody,
-    user : User
+    body: ConversationChangeTitleBody,
+    user: User,
+    socket: Socket
 ) : Promise<ConversationError | ConversationResponse> {
     // Find the conversation provided by user from the request and check if it exists
     const conversation : Conversation & Document = await Conversation.findById(body._id);
@@ -157,8 +151,9 @@ export async function conversationChangeTitleService(
  * @returns {Promise<ConversationError | ConversationResponse>}
  */
 export async function conversationSendMessage(
-    body : ConversationSendMessageBody,
-    user : User
+    body: ConversationSendMessageBody,
+    user: User,
+    socket: Socket
 ) : Promise<ConversationError | ConversationResponse> {
     // Find conversation by id provided in the request body and check if it exists
     const conversation : Conversation & Document = await Conversation.findById(body._id);
@@ -203,8 +198,9 @@ export async function conversationSendMessage(
  * @returns {Promise<ConversationError | ConversationResponse>}
  */
 export async function conversationDeleteMessage(
-    body : ConversationDeleteMessageBody,
-    user : User
+    body: ConversationDeleteMessageBody,
+    user: User,
+    socket: Socket
 ) : Promise<ConversationError | ConversationResponse> {
     // Find conversation and check if it exists
     const conversation : Conversation & Document | null = await Conversation.findById(body._id);
@@ -262,8 +258,9 @@ export async function conversationDeleteMessage(
  * @returns {Promise<ConversationError | ConversationResponse>}
  */
 export async function conversationMessageEditService(
-    body : ConversationEditMessageBody,
-    user : User
+    body: ConversationEditMessageBody,
+    user: User, 
+    socket: Socket
 ) : Promise<ConversationError | ConversationResponse> {
     // Find conversation and check if it exists
     const conversation : Conversation & Document | null = await Conversation.findById(body._id);

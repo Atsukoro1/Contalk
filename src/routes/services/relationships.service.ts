@@ -1,12 +1,8 @@
 // Models
 import { Types, Document } from "mongoose";
+import { Socket } from "socket.io";
 
 // Services, models & Interfaces
-import {
-    RelationshipsError,
-    RelationshipsRequestBody,
-    RelationshipsResponse
-} from "../interfaces/relationships.interface";
 import { User } from "../../models/user.model";
 import { Relation } from "../../models/relation.model";
 
@@ -41,8 +37,9 @@ async function getRelationships(receiver : User, user : User) : Promise<Array<Re
  * @returns {Promise<RelationshipsResponse | RelationshipsError>}
  */
 export async function reportServiceAddFriend(
-    body : RelationshipsRequestBody,
-    user: User
+    body: RelationshipsRequestBody,
+    user: User,
+    socket: Socket
 ) : Promise<RelationshipsResponse | RelationshipsError> {
     // Find user and check if he exists or is not banned
     const receiver : User = await User.findById(body._id);
@@ -131,8 +128,9 @@ export async function reportServiceAddFriend(
  * @returns {Promise<RelationshipsResponse | RelationshipsError>}
  */
 export async function reportServiceDeclineFriendRequest(
-    body : RelationshipsRequestBody,
-    user: User
+    body: RelationshipsRequestBody,
+    user: User,
+    socket: Socket
 ) : Promise<RelationshipsResponse | RelationshipsError> {
     // Find user and check if he exists or is not banned
     const receiver : User = await User.findById(body._id);
@@ -178,8 +176,9 @@ export async function reportServiceDeclineFriendRequest(
  * @returns {Promise<RelationshipsResponse | RelationshipsError>}
  */
  export async function reportServiceBlock(
-    body : RelationshipsRequestBody,
-    user: User
+    body: RelationshipsRequestBody,
+    user: User,
+    socket: Socket
 ) : Promise<RelationshipsResponse | RelationshipsError> {
     // Find user and check if he exists or is not banned
     const receiver : User = await User.findById(body._id);
@@ -269,8 +268,9 @@ export async function reportServiceDeclineFriendRequest(
  * @returns {Promise<RelationshipsResponse | RelationshipsError>}
  */
  export async function reportServiceUnblock(
-    body : RelationshipsRequestBody,
-    user: User
+    body: RelationshipsRequestBody,
+    user: User,
+    socket: Socket
 ) : Promise<RelationshipsResponse | RelationshipsError> {
     // Find user and check if he exists or is not banned
     const receiver : User & Document = await User.findById(body._id);

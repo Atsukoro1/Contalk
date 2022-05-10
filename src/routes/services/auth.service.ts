@@ -1,15 +1,14 @@
 // Interfaces, services & Models
-import { 
-    AuthError,
-    AuthLoginBody, 
-    AuthRegisterBody, 
-    AuthResponse 
-} from "../interfaces/auth.interface";
-import { User } from "../../models/user.model";
+import {
+    User
+} from "../../models/user.model";
 
 // Modules
 import * as argon2 from "argon2";
 import * as jwt from "jsonwebtoken";
+import {
+    Socket
+} from "socket.io";
 
 /**
  * @async
@@ -18,9 +17,15 @@ import * as jwt from "jsonwebtoken";
  * @param {AuthLoginBody} body - Request body of the request
  * @returns {Promise<AuthResponse | AuthError>}
  */
-export async function loginService(body : AuthLoginBody) : Promise<AuthResponse | AuthError> {
-    const existingUser = await User.findOne({ email: body.email });
-    if(!existingUser) {
+export async function loginService(
+    body: AuthLoginBody,
+    user: User,
+    socket: Socket
+): Promise <AuthResponse | AuthError> {
+    const existingUser = await User.findOne({
+        email: body.email
+    });
+    if (!existingUser) {
         return {
             error: "User with this email does not exist!",
             statusCode: 400
@@ -28,14 +33,16 @@ export async function loginService(body : AuthLoginBody) : Promise<AuthResponse 
     };
 
     const passMatch = await argon2.verify(existingUser.password, body.password);
-    if(!passMatch) {
+    if (!passMatch) {
         return {
             error: "Password does not match!",
             statusCode: 400
         };
     };
 
-    const token = await jwt.sign({ _id: existingUser._id }, process.env.JWT_SECRET);
+    const token = await jwt.sign({
+        _id: existingUser._id
+    }, process.env.JWT_SECRET);
 
     return {
         message: "Welcome back!",
@@ -51,9 +58,15 @@ export async function loginService(body : AuthLoginBody) : Promise<AuthResponse 
  * @param {AuthRegisterBody} body - Body of the HTTP request 
  * @returns {Promise<AuthResponse | AuthError>}
  */
-export async function registerService(body : AuthRegisterBody) : Promise<AuthResponse | AuthError> {
-    const existingUser = await User.findOne({ email: body.email });
-    if(existingUser) {
+export async function registerService(
+    body: AuthRegisterBody,
+    user: User,
+    socket: Socket
+): Promise < AuthResponse | AuthError > {
+    const existingUser = await User.findOne({
+        email: body.email
+    });
+    if (existingUser) {
         return {
             error: "User with this email already exists!",
             statusCode: 400
@@ -65,7 +78,9 @@ export async function registerService(body : AuthRegisterBody) : Promise<AuthRes
     const newUser = new User(body);
     newUser.save();
 
-    const token = jwt.sign({ _id: newUser._id }, process.env.JWT_SECRET);
+    const token = jwt.sign({
+        _id: newUser._id
+    }, process.env.JWT_SECRET);
 
     return {
         message: "Thank you for registering!",

@@ -32,7 +32,7 @@ interface FastifyServer extends FastifyInstance {
 
 interface SocketConnection extends Socket {
     user: User & Document
-}
+};
 
 /**
  * @async

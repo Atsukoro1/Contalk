@@ -1,13 +1,13 @@
-export interface SettingsError {
+declare interface SettingsError {
     statusCode : number;
     error: string;
-};
+}
 
-export interface SettingsResponse {
+declare interface SettingsResponse {
     success: boolean;
-};
+}
 
-export interface SettingsBody {
+declare interface SettingsBody {
     [x: string]: any;
     password: string;
     newName?: string;
@@ -15,4 +15,4 @@ export interface SettingsBody {
     newEmail?: string;
     newPhone?: string;
     newPassword?: string;
-};
+}

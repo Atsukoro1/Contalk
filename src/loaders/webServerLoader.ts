@@ -42,7 +42,7 @@ async function loadRoutes(server : FastifyInstance) : Promise<void> {
                     },
 
                     async handler(req : FastifyRequest, res : FastifyReply) : Promise<void> {
-                        const response = await (<any>route).service(req.body, (<any>req).user);
+                        const response = await (<any>route).service(req.body, (<any>req).user, (<any>server).io);
 
                         return response;
                     }

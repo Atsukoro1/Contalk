@@ -1,9 +1,7 @@
+// Libraries
+import { Socket } from "socket.io";
+
 // Services, models & Interfaces
-import { 
-    ReportBody,
-    ReportError,
-    ReportResponse
-} from "report.interface";
 import { User } from "../../models/user.model";
 import { Report } from "../../models/report.model";
 
@@ -19,8 +17,9 @@ import { connectedUsers } from "../../loaders/websocketLoader";
  * @returns {Promise<ReportError | ReportResponse>}
  */
 export async function reportService(
-    body : ReportBody,
-    user: User
+    body: ReportBody,
+    user: User,
+    socket: Socket
 ) : Promise<ReportError | ReportResponse> {
     const target : User = await User.findById(body._id);
     if(!target || target.type === 'BANNED' || target.type === 'ADMIN') {
