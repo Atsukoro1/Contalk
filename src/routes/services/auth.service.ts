@@ -11,6 +11,13 @@ import { User } from "../../models/user.model";
 import * as argon2 from "argon2";
 import * as jwt from "jsonwebtoken";
 
+/**
+ * @async
+ * @name loginService
+ * @description Route that let's users log in into their existing account
+ * @param {AuthLoginBody} body - Request body of the request
+ * @returns {Promise<AuthResponse | AuthError>}
+ */
 export async function loginService(body : AuthLoginBody) : Promise<AuthResponse | AuthError> {
     const existingUser = await User.findOne({ email: body.email });
     if(!existingUser) {
@@ -37,6 +44,13 @@ export async function loginService(body : AuthLoginBody) : Promise<AuthResponse 
     };
 };
 
+/**
+ * @async
+ * @name registerService
+ * @description Route that lets users create new account for our service
+ * @param {AuthRegisterBody} body - Body of the HTTP request 
+ * @returns {Promise<AuthResponse | AuthError>}
+ */
 export async function registerService(body : AuthRegisterBody) : Promise<AuthResponse | AuthError> {
     const existingUser = await User.findOne({ email: body.email });
     if(existingUser) {

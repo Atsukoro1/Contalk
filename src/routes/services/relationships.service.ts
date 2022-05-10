@@ -7,14 +7,16 @@ import {
     RelationshipsRequestBody,
     RelationshipsResponse
 } from "../interfaces/relationships.interface";
-import { User, UserType } from "../../models/user.model";
+import { User } from "../../models/user.model";
 import { Relation } from "../../models/relation.model";
 
 /**
- * Get list of relationships from two users
- * Param {User} receiver - user receiving the friend request or new friendship
- * Param {User} user - user sending the request 
- * Returns {Promise<Array<Relation>>}
+ * @asyncw
+ * @name getRelationships
+ * @description Get list of relationships from two users
+ * @param {User} receiver - user receiving the friend request or new friendship
+ * @param {User} user - user sending the request 
+ * @returns {Promise<Array<Relation>>}
  */
 async function getRelationships(receiver : User, user : User) : Promise<Array<Relation & Document>> {
     const relationships : Array<Relation & Document> = await Relation.find({ 
@@ -28,10 +30,12 @@ async function getRelationships(receiver : User, user : User) : Promise<Array<Re
 };
 
 /**
- * Adding user to friends or sending the friend request
- * Param {RelationshipsRequestBody} body 
- * Param {User} user 
- * Returns {Promise<RelationshipsResponse | RelationshipsError>}
+ * @async
+ * @name reportServiceAddFriend
+ * @description Adding user to friends or sending the friend request
+ * @param {RelationshipsRequestBody} body - Body of the request
+ * @param {User} user - Request user binded to the request from midleware
+ * @returns {Promise<RelationshipsResponse | RelationshipsError>}
  */
 export async function reportServiceAddFriend(
     body : RelationshipsRequestBody,
@@ -116,10 +120,12 @@ export async function reportServiceAddFriend(
 };
 
 /**
- * Decline friend request sent by another user
- * Param {RelationshipsRequestBody} body 
- * Param {User} user
- * Returns {Promise<RelationshipsResponse | RelationshipsError>}
+ * @async
+ * @name reportServiceDeclineFriendRequest
+ * @description Decline friend request sent by another user
+ * @param {RelationshipsRequestBody} body - Body of the request
+ * @param {User} user - Request user binded by the authentication middleware
+ * @returns {Promise<RelationshipsResponse | RelationshipsError>}
  */
 export async function reportServiceDeclineFriendRequest(
     body : RelationshipsRequestBody,
@@ -161,10 +167,12 @@ export async function reportServiceDeclineFriendRequest(
 };
 
 /**
- * Blocking user
- * Param {RelationshipsRequestBody} body
- * Param {User} user
- * Returns {Promise<RelationshipsResponse | RelationshipsError>}
+ * @async
+ * @name reportServiceBlock
+ * @description Blocking user route
+ * @param {RelationshipsRequestBody} body - Request body
+ * @param {User} user - User binded by the authentication middleware
+ * @returns {Promise<RelationshipsResponse | RelationshipsError>}
  */
  export async function reportServiceBlock(
     body : RelationshipsRequestBody,
@@ -250,10 +258,12 @@ export async function reportServiceDeclineFriendRequest(
 };
 
 /**
- * Unblock blocked user
- * Param {RelationshipsRequestBody} body
- * Param {User} user
- * Returns {Promise<RelationshipsResponse | RelationshipsError>}
+ * @async
+ * @name reportServiceUnblock
+ * @description Unblock blocked user
+ * @param {RelationshipsRequestBody} body - Request of the body
+ * @param {User} user - User binded by the authentication middleware
+ * @returns {Promise<RelationshipsResponse | RelationshipsError>}
  */
  export async function reportServiceUnblock(
     body : RelationshipsRequestBody,

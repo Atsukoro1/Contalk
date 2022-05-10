@@ -7,6 +7,14 @@ import {
 import { User } from "../../models/user.model";
 import { Report } from "../../models/report.model";
 
+/**
+ * @async
+ * @name reportService
+ * @description Route that lets users report other users
+ * @param {ReportBody} body - Body of the HTTP request 
+ * @param user - Request author's user profile
+ * @returns {Promise<ReportError | ReportResponse>}
+ */
 export async function reportService(
     body : ReportBody,
     user: User

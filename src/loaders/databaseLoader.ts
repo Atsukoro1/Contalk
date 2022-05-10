@@ -1,8 +1,12 @@
 import mongoose from "mongoose";
 
 /**
- * Estabilish connection with Mongoose database
- * Returns {Promise<void>}
+ * @async
+ * @export 
+ * @default
+ * @name startDatabase
+ * @description Estabilish connection with Mongoose database
+ * @returns {Promise<void>}
  */
 export default async function startDatabase() : Promise<void> {
     try {

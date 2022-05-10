@@ -1,11 +1,21 @@
 // Modules
-import fastify, { FastifyInstance, FastifyRequest, RouteOptions, FastifyReply } from "fastify";
-import fs from "fs";
+import fastify, { 
+    FastifyInstance, 
+    FastifyRequest, 
+    RouteOptions, 
+    FastifyReply 
+} from "fastify";
+import fs, { appendFile } from "fs";
+
+// Import another Loaders
+import webSocketLoader from './websocketLoader';
 
 /**
- * Load route controllers from controllers folder
- * Param - {FastifyInstance} server Fastify instance to insert routes into
- * Returns {Promise<void>}
+ * @async
+ * @name loadRoutes
+ * @description Load route controllers from controllers folder
+ * @param {FastifyInstance} server Fastify instance to insert routes into
+ * @returns {Promise<void>}
  */
 async function loadRoutes(server : FastifyInstance) : Promise<void> {
     /*
@@ -49,10 +59,12 @@ async function loadRoutes(server : FastifyInstance) : Promise<void> {
 };
 
 /**
- * Load middlewares, validators and other important things that we need
+ * @async
+ * @name loadMiddleware
+ * @description Load middlewares, validators and other important things that we need
  * to run the whole app corectly
- * Param - {FastifyInstance} server Fastify instance to insert middleware into
- * Returns {Promise<void>}
+ * @param {FastifyInstance} server Fastify instance to insert middleware into
+ * @returns {Promise<void>}
  */
 async function loadMiddleware(server : FastifyInstance) : Promise<void> { 
     server.register(require("../middleware/token.middleware"));
@@ -62,8 +74,11 @@ async function loadMiddleware(server : FastifyInstance) : Promise<void> {
 };
 
 /**
- * Initialize and start new Fastify instance
- * Returns {Promise<void>}
+ * @async
+ * @export
+ * @name startWebserver
+ * @descripion Initialize and start new Fastify instance
+ * @returns {Promise<void>}
  */
 export default async function startWebserver() : Promise<void> {
     const server = fastify();
@@ -76,4 +91,6 @@ export default async function startWebserver() : Promise<void> {
     server.listen(PORT, () => {
         console.log(`[WEBSERVER] Webserver started on port *${PORT}!`);
     });
+
+    await webSocketLoader(<any>server);
 };

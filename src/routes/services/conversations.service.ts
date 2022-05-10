@@ -17,10 +17,12 @@ import { Conversation } from "../../models/conversation.model";
 import { Message } from "../../models/message.model";
 
 /**
- * Creates a new conversation to send messages into for two users
- * Param {ConversationCreateBody} body 
- * Param {User} user 
- * Returns {Promise<ConversationError | ConversationResponse>}
+ * @async
+ * @name conversationCreateService
+ * @description Creates a new conversation to send messages into for two users
+ * @param {ConversationCreateBody} body - Body of the HTTP request
+ * @param {User} user - Author of the request's user profile
+ * @returns {Promise<ConversationError | ConversationResponse>}
  */
 export async function conversationCreateService(
     body : ConversationCreateBody,
@@ -106,10 +108,12 @@ export async function conversationCreateService(
 };
 
 /**
- * Change the conversation title to something else
- * Param {ConversationChangeTitleBody} body 
- * Param {User} user 
- * Returns {Promise<ConversationError | ConversationResponse>}
+ * @async
+ * @name conversationChangeTitleService
+ * @description Change the conversation title to something else
+ * @param {ConversationChangeTitleBody} body - Body of the HTTP request
+ * @param {User} user - Request author's user profile
+ * @returns {Promise<ConversationError | ConversationResponse>}
  */
 export async function conversationChangeTitleService(
     body : ConversationChangeTitleBody,
@@ -142,10 +146,12 @@ export async function conversationChangeTitleService(
 };
 
 /**
- * Send a message to specific conversation
- * Param {ConversationC} body 
- * Param {User} user
- * Returns Promise<ConversationError | ConversationResponse> 
+ * @async
+ * @name conversationSendMessage
+ * @description Send a message to specific conversation
+ * @param {ConversationC} body - Body of the HTTP request
+ * @param {User} user - Request author's user profile
+ * @returns {Promise<ConversationError | ConversationResponse>}
  */
 export async function conversationSendMessage(
     body : ConversationSendMessageBody,
@@ -186,10 +192,12 @@ export async function conversationSendMessage(
 };
 
 /**
- * Delete message from specific conversation
- * Param {ConversationDeleteMessageBody} body 
- * Param {User} user 
- * Returns {Promise<ConversationError | ConversationResponse>}
+ * @async
+ * @name conversationDeleteMessage
+ * @description Delete message from specific conversation
+ * @param {ConversationDeleteMessageBody} body - Body of the HTTP request
+ * @param {User} user - Request author's user profile
+ * @returns {Promise<ConversationError | ConversationResponse>}
  */
 export async function conversationDeleteMessage(
     body : ConversationDeleteMessageBody,
@@ -243,10 +251,12 @@ export async function conversationDeleteMessage(
 };
 
 /**
- * Edit message in specific conversation
- * Param {ConversationEditMessageBody} body 
- * Param {User} user 
- * Returns {Promise<ConversationError | ConversationResponse>}
+ * @async
+ * @name conversationMessageEditService
+ * @description Edit message in specific conversation
+ * @param {ConversationEditMessageBody} body - Body of the HTTP request
+ * @param {User} user - Request author's user profile
+ * @returns {Promise<ConversationError | ConversationResponse>}
  */
 export async function conversationMessageEditService(
     body : ConversationEditMessageBody,

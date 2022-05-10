@@ -14,6 +14,13 @@ interface Iterable {
     executor: () => void;
 }
 
+/**
+ * @async
+ * @name settingsService
+ * @param body 
+ * @param user 
+ * @returns 
+ */
 export async function settingsService(
     body : SettingsBody,
     user: User
