@@ -16,6 +16,9 @@ import { Relation } from "../../models/relation.model";
 import { Conversation } from "../../models/conversation.model";
 import { Message } from "../../models/message.model";
 
+// Map with all connected users
+import { connectedUsers } from "../../loaders/websocketLoader";
+
 /**
  * @async
  * @name conversationCreateService

@@ -10,6 +10,9 @@ import {
 import { User } from "../../models/user.model";
 import { Relation } from "../../models/relation.model";
 
+// Map with all connected users
+import { connectedUsers } from "../../loaders/websocketLoader";
+
 /**
  * @asyncw
  * @name getRelationships

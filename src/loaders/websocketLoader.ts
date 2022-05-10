@@ -63,11 +63,11 @@ export default async function(server : FastifyServer) : Promise<void> {
 
     server.io.use(socketValidation);
     
-    server.io.on('connection', async (socket : SocketConnection) => {
+    server.io.on('connection', async(socket : SocketConnection) => {
         await setUserActivity(socket.user, true);
         connectedUsers.set(socket.user._id, socket.id);
 
-        socket.on('disconnect', async () => {
+        socket.on('disconnect', async() => {
             await setUserActivity(socket.user, false);
             connectedUsers.delete(socket.user._id);
         });

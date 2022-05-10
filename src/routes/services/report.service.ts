@@ -7,6 +7,9 @@ import {
 import { User } from "../../models/user.model";
 import { Report } from "../../models/report.model";
 
+// Map with all connected users
+import { connectedUsers } from "../../loaders/websocketLoader";
+
 /**
  * @async
  * @name reportService

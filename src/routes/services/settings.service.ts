@@ -6,6 +6,9 @@ import {
 } from "../interfaces/settings.interface";
 import { User } from "../../models/user.model";
 
+// Map with all connected users
+import { connectedUsers } from "../../loaders/websocketLoader";
+
 // Modules
 import { hash, verify } from "argon2";
 
