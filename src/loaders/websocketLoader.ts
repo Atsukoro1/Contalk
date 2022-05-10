@@ -1,20 +1,52 @@
-// Modules, types and interfaces
+// Libraries
 import { 
     FastifyInstance 
 } from 'fastify';
 import {
-    Server as SocketServer
+    Server as SocketServer, 
+    Socket
 } from 'socket.io';
+import { Document } from "mongoose";
+
+// Modules, types and interfaces
+import { User } from '../models/user.model';
 
 // Socket validation middleware
 import socketValidation from "../middleware/socketToken.middleware";
 
 /*
-    Extend FastifyInstance interface by SocketServer
+    We'll store all connected users here.
+    All users will be stored in format mongoose_object_id => socket_id
+
+    We're using this because when we need to get socket_id to send message to for example
+    we will need the socket id but the only thing we have is mongoose object id so we'll convert it
+*/
+export const connectedUsers : Map<string, string> = new Map();
+
+/*
+    We need to extend some interfaces in order to have correct typings in our IDE
 */
 interface FastifyServer extends FastifyInstance {
     io: SocketServer
 };
+
+interface SocketConnection extends Socket {
+    user: User & Document
+}
+
+/**
+ * @async
+ * @name setUserActivity
+ * @description Set user online status to false or true based on if is socket online
+ * @param {User & Document} user User object
+ * @param {boolean} online If User is online
+ * @returns {Promise<void>}
+ */
+async function setUserActivity(user : User & Document, online : boolean) : Promise<void> {
+    await user.updateOne({
+        isActive: online ? true : false
+    });
+}
 
 /**
  * @async
@@ -31,11 +63,13 @@ export default async function(server : FastifyServer) : Promise<void> {
 
     server.io.use(socketValidation);
     
-    server.io.on('connection', (socket) => {
-        console.info('Socket connected!', socket.id);
+    server.io.on('connection', async (socket : SocketConnection) => {
+        await setUserActivity(socket.user, true);
+        connectedUsers.set(socket.user._id, socket.id);
 
-        socket.on('disconnect', () => {
-            console.info('Socket disconnected!', socket.id);
+        socket.on('disconnect', async () => {
+            await setUserActivity(socket.user, false);
+            connectedUsers.delete(socket.user._id);
         });
     });
 }

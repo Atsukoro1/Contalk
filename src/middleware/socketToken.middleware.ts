@@ -25,6 +25,7 @@ async function validateSocket(socket : Socket) : Promise<boolean | Error> {
     try {
         const validated = verify(token, process.env.JWT_SECRET);
         const user : User & Document | null = await User.findById((<any>validated)._id);
+        (<any>socket).user = user;
 
         if(!user ?? user.type === 'BANNED') {
             throw new Error();
