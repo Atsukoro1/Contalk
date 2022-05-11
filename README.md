@@ -10,12 +10,12 @@
   <p align="center">
     An API for my simple chat application
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
+    <a href="www.example.cz"><strong>Explore the docs (soon) »</strong></a>
     <br />
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
+    <a href="https://github.com/Atsukoro1/Contalk/issues">Report Bug</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>
+    <a href="https://github.com/Atsukoro1/Contalk/issues">Request Feature</a>
   </p>
 </div>
 
