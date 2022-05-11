@@ -24,8 +24,7 @@ export async function reportService(
     const target : User = await User.findById(body._id);
     if(!target || target.type === 'BANNED' || target.type === 'ADMIN') {
         return res.status(400).send({
-            error: "This user does not exist or is already banned!",
-            statusCode: 400
+            error: "This user does not exist or is already banned!"
         });
     };
 

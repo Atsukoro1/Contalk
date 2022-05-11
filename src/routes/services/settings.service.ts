@@ -29,8 +29,7 @@ export async function settingsService(
     const passwordValid : boolean = await verify(user.password, body.password);
     if(!passwordValid) {
         return res.status(401).send({
-            error: "Password does not match!",
-            statusCode: 401
+            error: "Password does not match!"
         });
     };
 

@@ -1,5 +1,4 @@
 declare interface AuthError {
-    statusCode : number;
     error: string;
 }
 

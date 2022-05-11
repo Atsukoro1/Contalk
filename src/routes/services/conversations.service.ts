@@ -27,8 +27,7 @@ export async function conversationCreateService(
     // Check if request author is trying to start conversation with themselves
     if(user._id.equals(body._id)) {
         return res.status(400).send({
-            error: "You can't start conversation with yourself!",
-            statusCode: 400
+            error: "You can't start conversation with yourself!"
         });
     };
 
@@ -36,8 +35,7 @@ export async function conversationCreateService(
     const recipient : User & Document = await User.findById(body._id);
     if(!recipient ?? recipient.type === 'BANNED') {
         return res.status(400).send({
-            error: "The user you're trying to start conversation with does not exist",
-            statusCode: 400
+            error: "The user you're trying to start conversation with does not exist"
         });
     };
 
@@ -58,8 +56,7 @@ export async function conversationCreateService(
     // Check if there is some block record in database 
     if(relationships.find(el => el.type === 'BLOCKED')) {
         return res.status(400).send({
-            error: "You can't start conversation with this user!",
-            statusCode: 400
+            error: "You can't start conversation with this user!"
         });
     };
 
@@ -67,8 +64,7 @@ export async function conversationCreateService(
     const friendRec : number = relationships.filter(el => el.type === 'FRIENDS').length;
     if(friendRec != 2) {
         return res.status(400).send({
-            error: "You can't start conversation with someone you're not friends with.",
-            statusCode: 400
+            error: "You can't start conversation with someone you're not friends with."
         });
     };
 
@@ -88,8 +84,7 @@ export async function conversationCreateService(
 
     if(existingCon) {
         return res.status(400).send({
-            error: "You already have a conversation with this user!",
-            statusCode: 400
+            error: "You already have a conversation with this user!"
         });
     };
 
@@ -122,16 +117,14 @@ export async function conversationChangeTitleService(
     const conversation : Conversation & Document = await Conversation.findById(body._id);
     if(!conversation) {
         return res.status(400).send({
-            error: "This conversation does not exist!",
-            statusCode: 400
+            error: "This conversation does not exist!"
         });
     };
 
     // Check if request author does have rights to edit conversation title (is in the conversation)
     if(!conversation.recipient.equals(user._id) && !conversation.creator.equals(user._id)) {
         return res.status(400).send({
-            error: "You don't have permissions to edit title of this conversation",
-            statusCode: 400
+            error: "You don't have permissions to edit title of this conversation"
         });
     };
 
@@ -161,16 +154,14 @@ export async function conversationSendMessage(
     const conversation : Conversation & Document = await Conversation.findById(body._id);
     if(!conversation) {
         return res.status(400).send({
-            error: "This conversation does not exist!",
-            statusCode: 400
+            error: "This conversation does not exist!"
         });
     };
 
     // Check if user has rights to post into the conversation (is creator or receiver)
     if(!conversation.creator.equals(user._id) && conversation.recipient.equals(user._id)) {
         return res.status(400).send({
-            error: "You don't have rights to post into this conversation",
-            statusCode: 400
+            error: "You don't have rights to post into this conversation"
         });
     };
 
@@ -208,16 +199,14 @@ export async function conversationDeleteMessage(
     const conversation : Conversation & Document | null = await Conversation.findById(body._id);
     if(!conversation) {
         return res.status(400).send({
-            error: "This conversation does not exist!",
-            statusCode: 400
+            error: "This conversation does not exist!"
         });
     };
 
     // Check if user has rights to make changes in this conversation
     if(!user._id.equals(conversation.creator) && !user._id.equals(conversation.recipient)) {
         return res.status(400).send({
-            error: "You don't have permissions to manage things in this conversation!",
-            statusCode: 400
+            error: "You don't have permissions to manage things in this conversation!"
         });
     };
 
@@ -225,8 +214,7 @@ export async function conversationDeleteMessage(
     const message : Message & Document | null = await Message.findById(body.messageId);
     if(!message) {
         return res.status(400).send({
-            error: "This message does not exist!",
-            statusCode: 400
+            error: "This message does not exist!"
         });
     };
 
@@ -268,16 +256,14 @@ export async function conversationMessageEditService(
     const conversation : Conversation & Document | null = await Conversation.findById(body._id);
     if(!conversation) {
         return res.status(400).send({
-            error: "This conversation does not exist!",
-            statusCode: 400
+            error: "This conversation does not exist!"
         });
     };
 
     // Check if user has rights to make changes in this conversation
     if(!user._id.equals(conversation.creator) && !user._id.equals(conversation.recipient)) {
         return res.status(400).send({
-            error: "You don't have permissions to manage things in this conversation!",
-            statusCode: 400
+            error: "You don't have permissions to manage things in this conversation!"
         });
     };
 
@@ -285,16 +271,14 @@ export async function conversationMessageEditService(
     const message : Message & Document | null = await Message.findById(body.messageId);
     if(!message) {
         return res.status(400).send({
-            error: "This message does not exist!",
-            statusCode: 400
+            error: "This message does not exist!"
         });
     };
 
     // Check is request author is also the author of the message
     if(!message.author.equals(user._id)) {
         return res.status(400).send({
-            error: "You don't have permissions to make changes to this message!",
-            statusCode: 400
+            error: "You don't have permissions to make changes to this message!"
         });
     };
 

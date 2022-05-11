@@ -27,16 +27,14 @@ export async function loginService(
     });
     if (!existingUser) {
         return res.status(400).send({
-            error: "User with this email does not exist!",
-            statusCode: 400
+            error: "User with this email does not exist!"
         });
     };
 
     const passMatch = await argon2.verify(existingUser.password, body.password);
     if (!passMatch) {
         return res.status(400).send({
-            error: "Password does not match!",
-            statusCode: 400
+            error: "Password does not match!"
         });
     };
 
@@ -69,8 +67,7 @@ export async function registerService(
 
     if (existingUser) {
         return res.status(400).send({
-            error: "User with this email already exists!",
-            statusCode: 400
+            error: "User with this email already exists!"
         });
     };
 

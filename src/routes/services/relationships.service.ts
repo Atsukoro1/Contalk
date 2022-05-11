@@ -46,38 +46,33 @@ export async function reportServiceAddFriend(
 
     if(!receiver ?? receiver.type === 'BANNED') {
         return res.status(400).send({
-            error: "User you're trying to add user that does not exist",
-            statusCode: 400
+            error: "User you're trying to add user that does not exist"
         });
     }
 
     // Check if user is sending friend request to themselves
     if(user._id.equals(body._id)) {
         return res.status(400).send({
-            error: "You can't send a friend request to yourself",
-            statusCode: 400
+            error: "You can't send a friend request to yourself"
         });
     };
 
     const relationships : Array<Relation & Document> = await getRelationships(receiver, user);
 
     // Check if request author already sent a friend request to opponent
-    if(relationships.find(el => el.type === 'FRIEND_REQUEST' && el.creator.equals(user._id))) return {
-        error: "You already sent friend request to this user!",
-        statusCode: 400
-    };
+    if(relationships.find(el => el.type === 'FRIEND_REQUEST' && el.creator.equals(user._id))) return res.status(400).send({
+        error: "You already sent friend request to this user!"
+    });
 
     // Check if user already have a friendship status with the opponent user
-    if(relationships.find(el => el.type === 'FRIENDS')) return {
-        error: "You are already friends with this user!",
-        statusCode: 400
-    };
+    if(relationships.find(el => el.type === 'FRIENDS')) return res.status(400).send({
+        error: "You are already friends with this user!"
+    });
 
     // Check if one of the sides sent a block request before
-    if(relationships.find(el => el.type === 'BLOCKED')) return {
-        error: "Either you blocked the person, or the person you're trying to add blocked you.",
-        statusCode: 400
-    };
+    if(relationships.find(el => el.type === 'BLOCKED')) return res.status(400).send({
+        error: "Either you blocked the person, or the person you're trying to add blocked you."
+    });
 
     /* 
         Check if request sender's opponent already sent a friend request
@@ -101,9 +96,9 @@ export async function reportServiceAddFriend(
             }
         ]);
 
-        return {
+        return res.status(200).send({
             success: true
-        };
+        });
     } else {
         const newRelation : Relation & Document = new Relation({
             type: 'FRIEND_REQUEST',
@@ -136,16 +131,14 @@ export async function reportServiceDeclineFriendRequest(
     const receiver : User = await User.findById(body._id);
     if(!receiver ?? receiver.type === 'BANNED') {
         return res.status(400).send({
-            error: "User from whom you're trying to decline request does not exists or is banned",
-            statusCode: 400
+            error: "User from whom you're trying to decline request does not exists or is banned"
         });
     };
 
     // Check if user is sending friend request to themselves
     if(user._id.equals(body._id)) {
         return res.status(400).send({
-            error: "You can't decline friend request from yourself",
-            statusCode: 400
+            error: "You can't decline friend request from yourself"
         });
     };
 
@@ -154,8 +147,7 @@ export async function reportServiceDeclineFriendRequest(
     // Check if target user sent friend request to the request author
     if(!relationships.find(el => el.type === 'FRIEND_REQUEST' && el.target.equals(user._id))) {
         return res.status(400).send({
-            error: "This user didn't send you friend request",
-            statusCode: 400
+            error: "This user didn't send you friend request"
         });
     };
 
@@ -185,16 +177,14 @@ export async function reportServiceDeclineFriendRequest(
 
     if(!receiver ?? receiver.type === 'BANNED') {
         return res.status(400).send({
-            error: "User you're trying to block does not exist",
-            statusCode: 400
+            error: "User you're trying to block does not exist"
         });
     }
     
     // Check if user is sending friend request to themselves
     if(user._id.equals(body._id)) {
         return res.status(400).send({
-            error: "You can't block yourself",
-            statusCode: 400
+            error: "You can't block yourself"
         });
     };
     
@@ -203,8 +193,7 @@ export async function reportServiceDeclineFriendRequest(
     // Check if user is trying to block someone they already blocked
     if(relationships.find(el => el.type === 'BLOCKED' && el.creator.equals(user._id))) {
         return res.status(400).send({
-            error: "You can't blocked someone you already blocked!",
-            statusCode: 400
+            error: "You can't blocked someone you already blocked!"
         });
     };
 
@@ -277,31 +266,29 @@ export async function reportServiceDeclineFriendRequest(
 
     if(!receiver ?? receiver.type === 'BANNED') {
         return res.status(400).send({
-            error: "User you're trying to block does not exist",
-            statusCode: 400
+            error: "User you're trying to block does not exist"
         });
     }
     
     // Check if user is removing block from themselves (they cannot)
     if(user._id.equals(body._id)) {
         return res.status(400).send({
-            error: "You can't unblock yourself",
-            statusCode: 400
+            error: "You can't unblock yourself"
         });
     };
 
     const relationships : Array<Relation & Document> = await getRelationships(receiver, user);
 
+    // Check if author of the request blocked the target user
     const authorBlocked = relationships.find(el => el.type === 'BLOCKED' && user._id.equals(el.creator));
     if(!authorBlocked) {
         return res.status(400).send({
-            error: "You didn't block this user!",
-            statusCode: 400
+            error: "You didn't block this user!"
         });
     };
 
+    // Delete the block and respond
     await authorBlocked.delete();
-
     return res.status(200).send({
         success: true
     });

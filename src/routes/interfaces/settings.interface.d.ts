@@ -1,5 +1,4 @@
 declare interface SettingsError {
-    statusCode : number;
     error: string;
 }
 

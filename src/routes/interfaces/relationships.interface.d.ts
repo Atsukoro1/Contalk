@@ -8,5 +8,4 @@ declare interface RelationshipsResponse {
 
 declare interface RelationshipsError {
     error: string;
-    statusCode: number;
 }

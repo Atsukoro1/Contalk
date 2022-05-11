@@ -1,5 +1,4 @@
 declare interface ReportError {
-    statusCode : number;
     error: string;
 }
 

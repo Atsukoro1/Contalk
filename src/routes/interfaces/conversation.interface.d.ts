@@ -4,7 +4,6 @@ declare interface ConversationResponse {
 
 declare interface ConversationError {
     error: string;
-    statusCode: number;
 }
 
 declare interface ConversationCreateBody {
