@@ -1,3 +1,6 @@
+// Third party libraries
+import { FastifyReply } from "fastify";
+
 // Interfaces, services & Models
 import {
     User
@@ -16,35 +19,36 @@ import * as jwt from "jsonwebtoken";
  */
 export async function loginService(
     body: AuthLoginBody,
-    user: User
+    user: User,
+    res: FastifyReply
 ): Promise <AuthResponse | AuthError> {
     const existingUser = await User.findOne({
         email: body.email
     });
     if (!existingUser) {
-        return {
+        return res.status(400).send({
             error: "User with this email does not exist!",
             statusCode: 400
-        };
+        });
     };
 
     const passMatch = await argon2.verify(existingUser.password, body.password);
     if (!passMatch) {
-        return {
+        return res.status(400).send({
             error: "Password does not match!",
             statusCode: 400
-        };
+        });
     };
 
     const token = await jwt.sign({
         _id: existingUser._id
     }, process.env.JWT_SECRET);
 
-    return {
+    return res.status(200).send({
         message: "Welcome back!",
         token: token,
         user: existingUser
-    };
+    });
 };
 
 /**
@@ -56,16 +60,18 @@ export async function loginService(
  */
 export async function registerService(
     body: AuthRegisterBody,
-    user: User
+    user: User,
+    res: FastifyReply
 ): Promise < AuthResponse | AuthError > {
     const existingUser = await User.findOne({
         email: body.email
     });
+
     if (existingUser) {
-        return {
+        return res.status(400).send({
             error: "User with this email already exists!",
             statusCode: 400
-        };
+        });
     };
 
     body.password = await argon2.hash(body.password);
@@ -77,9 +83,9 @@ export async function registerService(
         _id: newUser._id
     }, process.env.JWT_SECRET);
 
-    return {
+    return res.status(400).send({
         message: "Thank you for registering!",
         token: token,
         user: newUser
-    };
+    });
 };

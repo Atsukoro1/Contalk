@@ -1,5 +1,6 @@
 // Models
 import { Types, Document } from "mongoose";
+import { FastifyReply } from "fastify";
 
 // Services, models & Interfaces
 import { User } from "../../models/user.model";
@@ -37,24 +38,25 @@ async function getRelationships(receiver : User, user : User) : Promise<Array<Re
  */
 export async function reportServiceAddFriend(
     body: RelationshipsRequestBody,
-    user: User
+    user: User,
+    res: FastifyReply
 ) : Promise<RelationshipsResponse | RelationshipsError> {
     // Find user and check if he exists or is not banned
     const receiver : User = await User.findById(body._id);
 
     if(!receiver ?? receiver.type === 'BANNED') {
-        return {
+        return res.status(400).send({
             error: "User you're trying to add user that does not exist",
             statusCode: 400
-        };
+        });
     }
 
     // Check if user is sending friend request to themselves
     if(user._id.equals(body._id)) {
-        return {
+        return res.status(400).send({
             error: "You can't send a friend request to yourself",
             statusCode: 400
-        };
+        });
     };
 
     const relationships : Array<Relation & Document> = await getRelationships(receiver, user);
@@ -111,9 +113,9 @@ export async function reportServiceAddFriend(
 
         await newRelation.save();
 
-        return {
+        return res.status(200).send({
             success: true
-        };
+        });
     }
 };
 
@@ -127,41 +129,42 @@ export async function reportServiceAddFriend(
  */
 export async function reportServiceDeclineFriendRequest(
     body: RelationshipsRequestBody,
-    user: User
+    user: User,
+    res: FastifyReply
 ) : Promise<RelationshipsResponse | RelationshipsError> {
     // Find user and check if he exists or is not banned
     const receiver : User = await User.findById(body._id);
     if(!receiver ?? receiver.type === 'BANNED') {
-        return {
+        return res.status(400).send({
             error: "User from whom you're trying to decline request does not exists or is banned",
             statusCode: 400
-        };
+        });
     };
 
     // Check if user is sending friend request to themselves
     if(user._id.equals(body._id)) {
-        return {
+        return res.status(400).send({
             error: "You can't decline friend request from yourself",
             statusCode: 400
-        };
+        });
     };
 
     const relationships : Array<Relation & Document> = await getRelationships(receiver, user);
 
     // Check if target user sent friend request to the request author
     if(!relationships.find(el => el.type === 'FRIEND_REQUEST' && el.target.equals(user._id))) {
-        return {
+        return res.status(400).send({
             error: "This user didn't send you friend request",
             statusCode: 400
-        };
+        });
     };
 
     // Delete the friend request from target user because request was declined
     await relationships.find(el => el.type === 'FRIEND_REQUEST' && el.creator.equals(receiver._id)).delete()
 
-    return {
+    return res.status(200).send({
         success: true
-    };
+    });
 };
 
 /**
@@ -174,34 +177,35 @@ export async function reportServiceDeclineFriendRequest(
  */
  export async function reportServiceBlock(
     body: RelationshipsRequestBody,
-    user: User
+    user: User,
+    res: FastifyReply
 ) : Promise<RelationshipsResponse | RelationshipsError> {
     // Find user and check if he exists or is not banned
     const receiver : User = await User.findById(body._id);
 
     if(!receiver ?? receiver.type === 'BANNED') {
-        return {
+        return res.status(400).send({
             error: "User you're trying to block does not exist",
             statusCode: 400
-        };
+        });
     }
     
     // Check if user is sending friend request to themselves
     if(user._id.equals(body._id)) {
-        return {
+        return res.status(400).send({
             error: "You can't block yourself",
             statusCode: 400
-        };
+        });
     };
     
     const relationships : Array<Relation & Document> = await getRelationships(receiver, user);
 
     // Check if user is trying to block someone they already blocked
     if(relationships.find(el => el.type === 'BLOCKED' && el.creator.equals(user._id))) {
-        return {
+        return res.status(400).send({
             error: "You can't blocked someone you already blocked!",
             statusCode: 400
-        };
+        });
     };
 
     // Check if request author is already friend with target user and remove the friendship
@@ -250,9 +254,9 @@ export async function reportServiceDeclineFriendRequest(
         target: receiver._id
     }).save();
 
-    return {
+    return res.status(200).send({
         success: true
-    }
+    });
 };
 
 /**
@@ -265,39 +269,40 @@ export async function reportServiceDeclineFriendRequest(
  */
  export async function reportServiceUnblock(
     body: RelationshipsRequestBody,
-    user: User
+    user: User,
+    res: FastifyReply
 ) : Promise<RelationshipsResponse | RelationshipsError> {
     // Find user and check if he exists or is not banned
     const receiver : User & Document = await User.findById(body._id);
 
     if(!receiver ?? receiver.type === 'BANNED') {
-        return {
+        return res.status(400).send({
             error: "User you're trying to block does not exist",
             statusCode: 400
-        };
+        });
     }
     
     // Check if user is removing block from themselves (they cannot)
     if(user._id.equals(body._id)) {
-        return {
+        return res.status(400).send({
             error: "You can't unblock yourself",
             statusCode: 400
-        };
+        });
     };
 
     const relationships : Array<Relation & Document> = await getRelationships(receiver, user);
 
     const authorBlocked = relationships.find(el => el.type === 'BLOCKED' && user._id.equals(el.creator));
     if(!authorBlocked) {
-        return {
+        return res.status(400).send({
             error: "You didn't block this user!",
             statusCode: 400
-        };
+        });
     };
 
     await authorBlocked.delete();
 
-    return {
+    return res.status(200).send({
         success: true
-    };
+    });
 };

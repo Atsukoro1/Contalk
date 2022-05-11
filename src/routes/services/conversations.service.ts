@@ -1,5 +1,6 @@
 // Modules & External dependencies
 import { Document, Types } from "mongoose";
+import { FastifyReply } from "fastify";
 
 // Interfaces, services & Models
 import { User } from "../../models/user.model";
@@ -20,23 +21,24 @@ import { emitEvent } from "../../loaders/websocketLoader";
  */
 export async function conversationCreateService(
     body: ConversationCreateBody,
-    user: User
+    user: User,
+    res: FastifyReply
 ) : Promise<ConversationError | ConversationResponse> {
     // Check if request author is trying to start conversation with themselves
     if(user._id.equals(body._id)) {
-        return {
+        return res.status(400).send({
             error: "You can't start conversation with yourself!",
             statusCode: 400
-        };
+        });
     };
 
     // Check if user that logged user is trying to start conversation with exists
     const recipient : User & Document = await User.findById(body._id);
     if(!recipient ?? recipient.type === 'BANNED') {
-        return {
+        return res.status(400).send({
             error: "The user you're trying to start conversation with does not exist",
             statusCode: 400
-        };
+        });
     };
 
     // Find all relations between those two users
@@ -55,19 +57,19 @@ export async function conversationCreateService(
 
     // Check if there is some block record in database 
     if(relationships.find(el => el.type === 'BLOCKED')) {
-        return {
+        return res.status(400).send({
             error: "You can't start conversation with this user!",
             statusCode: 400
-        };
+        });
     };
 
     // Check if these two users are friends
     const friendRec : number = relationships.filter(el => el.type === 'FRIENDS').length;
     if(friendRec != 2) {
-        return {
+        return res.status(400).send({
             error: "You can't start conversation with someone you're not friends with.",
             statusCode: 400
-        };
+        });
     };
 
     // Check if user already have a conversation 
@@ -85,16 +87,17 @@ export async function conversationCreateService(
     });
 
     if(existingCon) {
-        return {
+        return res.status(400).send({
             error: "You already have a conversation with this user!",
             statusCode: 400
-        };
+        });
     };
 
     const newConv = new Conversation({
         creator: user._id,
         recipient: recipient._id
     });
+
     await newConv.save();
 
     return {
@@ -112,23 +115,24 @@ export async function conversationCreateService(
  */
 export async function conversationChangeTitleService(
     body: ConversationChangeTitleBody,
-    user: User
+    user: User,
+    res: FastifyReply
 ) : Promise<ConversationError | ConversationResponse> {
     // Find the conversation provided by user from the request and check if it exists
     const conversation : Conversation & Document = await Conversation.findById(body._id);
     if(!conversation) {
-        return {
+        return res.status(400).send({
             error: "This conversation does not exist!",
             statusCode: 400
-        };
+        });
     };
 
     // Check if request author does have rights to edit conversation title (is in the conversation)
     if(!conversation.recipient.equals(user._id) && !conversation.creator.equals(user._id)) {
-        return {
+        return res.status(400).send({
             error: "You don't have permissions to edit title of this conversation",
             statusCode: 400
-        };
+        });
     };
 
     // Change title to whatever the user wants to and save
@@ -150,23 +154,24 @@ export async function conversationChangeTitleService(
  */
 export async function conversationSendMessage(
     body: ConversationSendMessageBody,
-    user: User
+    user: User,
+    res: FastifyReply
 ) : Promise<ConversationError | ConversationResponse> {
     // Find conversation by id provided in the request body and check if it exists
     const conversation : Conversation & Document = await Conversation.findById(body._id);
     if(!conversation) {
-        return {
+        return res.status(400).send({
             error: "This conversation does not exist!",
             statusCode: 400
-        }
+        });
     };
 
     // Check if user has rights to post into the conversation (is creator or receiver)
     if(!conversation.creator.equals(user._id) && conversation.recipient.equals(user._id)) {
-        return {
+        return res.status(400).send({
             error: "You don't have rights to post into this conversation",
             statusCode: 400
-        };
+        });
     };
 
     // Create a new message and set it as last in current conversation
@@ -196,32 +201,33 @@ export async function conversationSendMessage(
  */
 export async function conversationDeleteMessage(
     body: ConversationDeleteMessageBody,
-    user: User
+    user: User,
+    res: FastifyReply
 ) : Promise<ConversationError | ConversationResponse> {
     // Find conversation and check if it exists
     const conversation : Conversation & Document | null = await Conversation.findById(body._id);
     if(!conversation) {
-        return {
+        return res.status(400).send({
             error: "This conversation does not exist!",
             statusCode: 400
-        };
+        });
     };
 
     // Check if user has rights to make changes in this conversation
     if(!user._id.equals(conversation.creator) && !user._id.equals(conversation.recipient)) {
-        return {
+        return res.status(400).send({
             error: "You don't have permissions to manage things in this conversation!",
             statusCode: 400
-        };
+        });
     };
 
     // Find message and check if it exists
     const message : Message & Document | null = await Message.findById(body.messageId);
     if(!message) {
-        return {
+        return res.status(400).send({
             error: "This message does not exist!",
             statusCode: 400
-        };
+        });
     };
 
     /*
@@ -255,40 +261,41 @@ export async function conversationDeleteMessage(
  */
 export async function conversationMessageEditService(
     body: ConversationEditMessageBody,
-    user: User
+    user: User,
+    res: FastifyReply
 ) : Promise<ConversationError | ConversationResponse> {
     // Find conversation and check if it exists
     const conversation : Conversation & Document | null = await Conversation.findById(body._id);
     if(!conversation) {
-        return {
+        return res.status(400).send({
             error: "This conversation does not exist!",
             statusCode: 400
-        };
+        });
     };
 
     // Check if user has rights to make changes in this conversation
     if(!user._id.equals(conversation.creator) && !user._id.equals(conversation.recipient)) {
-        return {
+        return res.status(400).send({
             error: "You don't have permissions to manage things in this conversation!",
             statusCode: 400
-        };
+        });
     };
 
     // Find message and check if it exists
     const message : Message & Document | null = await Message.findById(body.messageId);
     if(!message) {
-        return {
+        return res.status(400).send({
             error: "This message does not exist!",
             statusCode: 400
-        };
+        });
     };
 
     // Check is request author is also the author of the message
     if(!message.author.equals(user._id)) {
-        return {
+        return res.status(400).send({
             error: "You don't have permissions to make changes to this message!",
             statusCode: 400
-        };
+        });
     };
 
     // Change content and save the message

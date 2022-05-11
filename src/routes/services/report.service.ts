@@ -1,3 +1,6 @@
+// Third party libraries
+import { FastifyReply } from "fastify";
+
 // Services, models & Interfaces
 import { User } from "../../models/user.model";
 import { Report } from "../../models/report.model";
@@ -15,14 +18,15 @@ import { emitEvent } from "../../loaders/websocketLoader";
  */
 export async function reportService(
     body: ReportBody,
-    user: User
+    user: User,
+    res: FastifyReply
 ) : Promise<ReportError | ReportResponse> {
     const target : User = await User.findById(body._id);
     if(!target || target.type === 'BANNED' || target.type === 'ADMIN') {
-        return {
+        return res.status(400).send({
             error: "This user does not exist or is already banned!",
             statusCode: 400
-        };
+        });
     };
 
     const newReport = new Report({
@@ -33,7 +37,7 @@ export async function reportService(
 
     await newReport.save();
 
-    return {
+    return res.status(200).send({
         success: true
-    };
+    });
 };

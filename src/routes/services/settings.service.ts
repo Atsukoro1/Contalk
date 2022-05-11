@@ -6,6 +6,7 @@ import { emitEvent } from "../../loaders/websocketLoader";
 
 // Modules
 import { hash, verify } from "argon2";
+import { FastifyReply } from "fastify";
 
 interface Iterable {
     inBody: string;
@@ -15,20 +16,22 @@ interface Iterable {
 /**
  * @async
  * @name settingsService
- * @param body 
- * @param user 
- * @returns 
+ * @description This route does let user everything on their account
+ * @param {SettingsBody} body Body of the HTTP request 
+ * @param user User object with the mongoose document
+ * @returns {Promise<SettingsError | SettingsResponse>}
  */
 export async function settingsService(
     body: SettingsBody,
-    user: User
+    user: User,
+    res: FastifyReply
 ) : Promise<SettingsError | SettingsResponse> {
     const passwordValid : boolean = await verify(user.password, body.password);
     if(!passwordValid) {
-        return {
+        return res.status(401).send({
             error: "Password does not match!",
             statusCode: 401
-        };
+        });
     };
 
     delete body.password;
@@ -78,7 +81,13 @@ export async function settingsService(
 
     await User.findByIdAndUpdate(user._id, willBeChanged);
 
-    return {
-        success: somethingChanged
-    };
+    if(somethingChanged) {
+        return res.status(200).send({
+            success: true
+        });
+    } else {
+        return res.status(400).send({
+            error: "You didn't change anything!"
+        });
+    }
 };
