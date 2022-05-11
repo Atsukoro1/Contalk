@@ -95,9 +95,13 @@ export async function conversationCreateService(
 
     await newConv.save();
 
-    return {
+    // Send the new conversation data to both users
+    await emitEvent(user._id, 'conversationCreate', newConv);
+    await emitEvent(recipient._id, 'conversationCreate', newConv);
+
+    return res.status(200).send({
         success: true
-    };
+    });
 };
 
 /**
@@ -132,9 +136,16 @@ export async function conversationChangeTitleService(
     conversation.title = body.title;
     await conversation.save();
 
-    return {
+    // Send the new conversation to both of the users
+    await emitEvent(user._id, 'conversationChangeTitle', conversation);
+    await emitEvent(
+        conversation.recipient.equals(user._id) ? conversation.creator : conversation.recipient,
+        'conversationChangeTitle', conversation
+    );
+
+    return res.status(200).send({
         success: true
-    }
+    });
 };
 
 /**
@@ -177,9 +188,16 @@ export async function conversationSendMessage(
         lastMessage: newMessage._id
     });
 
-    return {
+    // Send the message to the both connected users
+    await emitEvent(user._id, 'messageCreate', newMessage);
+    await emitEvent(
+        conversation.recipient.equals(user._id) ? conversation.creator : conversation.recipient,
+        'messageCreate', newMessage
+    );
+
+    return res.status(200).send({
         success: true
-    }
+    });
 };
 
 /**
@@ -234,9 +252,16 @@ export async function conversationDeleteMessage(
         await message.save();
     };
 
-    return {
+    // Send the edited message to the both connected user
+    await emitEvent(user._id, 'messageDelete', message);
+    await emitEvent(
+        conversation.recipient.equals(user._id) ? conversation.creator : conversation.recipient,
+        'messageDelete', message
+    );
+
+    return res.status(200).send({
         success: true
-    };
+    });
 };
 
 /**
@@ -286,7 +311,14 @@ export async function conversationMessageEditService(
     message.content = body.textContent;
     await message.save();
 
-    return {
+    // Send the edited message to the both connected users
+    await emitEvent(user._id, 'messageEdit', message);
+    await emitEvent(
+        conversation.recipient.equals(user._id) ? conversation.creator : conversation.recipient,
+        'messageEdit', message
+    );
+
+    return res.status(200).send({
         success: true
-    };
+    });
 };

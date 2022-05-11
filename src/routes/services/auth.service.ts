@@ -60,7 +60,7 @@ export async function registerService(
     body: AuthRegisterBody,
     user: User,
     res: FastifyReply
-): Promise < AuthResponse | AuthError > {
+): Promise <AuthResponse | AuthError> {
     const existingUser = await User.findOne({
         email: body.email
     });

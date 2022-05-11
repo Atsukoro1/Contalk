@@ -1,8 +1,8 @@
 import {
-    reportServiceAddFriend,
-    reportServiceBlock,
-    reportServiceDeclineFriendRequest,
-    reportServiceUnblock
+    relationshipServiceAddFriend,
+    relationshipServiceBlock,
+    relationshipServiceDeclineFriendRequest,
+    relationshipServiceUnblock
 } from "../services/relationships.service";
 import {
     relationshipsValidator,
@@ -13,24 +13,24 @@ module.exports = [
         url: '/relationships/block',
         method: 'DELETE',
         schema: relationshipsValidator,
-        service: reportServiceUnblock
+        service: relationshipServiceUnblock
     }, 
     {
         url: '/relationships/friends',
         method: 'DELETE',
         schema: relationshipsValidator,
-        service: reportServiceDeclineFriendRequest
+        service: relationshipServiceDeclineFriendRequest
     },
     {
         url: '/relationships/block',
         method: 'POST',
         schema: relationshipsValidator,
-        service: reportServiceBlock
+        service: relationshipServiceBlock
     },
     {
         url: '/relationships/friends', 
         method: 'POST',
         schema: relationshipsValidator,
-        service: reportServiceAddFriend
+        service: relationshipServiceAddFriend
     }
 ];

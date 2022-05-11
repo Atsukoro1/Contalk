@@ -30,13 +30,13 @@ async function getRelationships(receiver : User, user : User) : Promise<Array<Re
 
 /**
  * @async
- * @name reportServiceAddFriend
+ * @name relationshipServiceAddFriend
  * @description Adding user to friends or sending the friend request
  * @param {RelationshipsRequestBody} body - Body of the request
  * @param {User} user - Request user binded to the request from midleware
  * @returns {Promise<RelationshipsResponse | RelationshipsError>}
  */
-export async function reportServiceAddFriend(
+export async function relationshipServiceAddFriend(
     body: RelationshipsRequestBody,
     user: User,
     res: FastifyReply
@@ -96,6 +96,10 @@ export async function reportServiceAddFriend(
             }
         ]);
 
+        // Emit the new friend data to both the connected users
+        await emitEvent(user._id, 'friendsAdd', { user: receiver._id });
+        await emitEvent(receiver._id, 'friendsAdd', { user: user._id });
+
         return res.status(200).send({
             success: true
         });
@@ -108,6 +112,10 @@ export async function reportServiceAddFriend(
 
         await newRelation.save();
 
+        // Emit the new friend data to both the connected users
+        await emitEvent(user._id, 'friendsRequestAdd', { user: receiver._id });
+        await emitEvent(receiver._id, 'friendsRequestAdd', { user: user._id });
+
         return res.status(200).send({
             success: true
         });
@@ -116,13 +124,13 @@ export async function reportServiceAddFriend(
 
 /**
  * @async
- * @name reportServiceDeclineFriendRequest
+ * @name relationshipServiceDeclineFriendRequest
  * @description Decline friend request sent by another user
  * @param {RelationshipsRequestBody} body - Body of the request
  * @param {User} user - Request user binded by the authentication middleware
  * @returns {Promise<RelationshipsResponse | RelationshipsError>}
  */
-export async function reportServiceDeclineFriendRequest(
+export async function relationshipServiceDeclineFriendRequest(
     body: RelationshipsRequestBody,
     user: User,
     res: FastifyReply
@@ -161,13 +169,13 @@ export async function reportServiceDeclineFriendRequest(
 
 /**
  * @async
- * @name reportServiceBlock
+ * @name relationshipServiceBlock
  * @description Blocking user route
  * @param {RelationshipsRequestBody} body - Request body
  * @param {User} user - User binded by the authentication middleware
  * @returns {Promise<RelationshipsResponse | RelationshipsError>}
  */
- export async function reportServiceBlock(
+ export async function relationshipServiceBlock(
     body: RelationshipsRequestBody,
     user: User,
     res: FastifyReply
@@ -250,13 +258,13 @@ export async function reportServiceDeclineFriendRequest(
 
 /**
  * @async
- * @name reportServiceUnblock
+ * @name relationshipServiceUnblock
  * @description Unblock blocked user
  * @param {RelationshipsRequestBody} body - Request of the body
  * @param {User} user - User binded by the authentication middleware
  * @returns {Promise<RelationshipsResponse | RelationshipsError>}
  */
- export async function reportServiceUnblock(
+ export async function relationshipServiceUnblock(
     body: RelationshipsRequestBody,
     user: User,
     res: FastifyReply
