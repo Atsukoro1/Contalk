@@ -6,7 +6,10 @@ import {
     Server as SocketServer, 
     Socket
 } from 'socket.io';
-import { Document } from "mongoose";
+import { 
+    Document,
+    Types 
+} from "mongoose";
 
 // Modules, types and interfaces
 import { User } from '../models/user.model';
@@ -22,6 +25,31 @@ import socketValidation from "../middleware/socketToken.middleware";
     we will need the socket id but the only thing we have is mongoose object id so we'll convert it
 */
 export const connectedUsers : Map<string, string> = new Map();
+
+/**
+ * 
+ * @param userId 
+ * @param socket 
+ * @param event 
+ * @param data 
+ * @returns 
+ */
+export async function emitEvent(
+    userId: Types.ObjectId, 
+    socket: Socket,
+    event: string,
+    data: any
+) {
+    const sendTo : string | undefined = connectedUsers.get(userId.toString());
+
+    if(!sendTo) return;
+
+    await socket
+    .to(sendTo)
+    .emit(event, data);
+
+    return;
+}
 
 /*
     We need to extend some interfaces in order to have correct typings in our IDE
@@ -65,11 +93,11 @@ export default async function(server : FastifyServer) : Promise<void> {
     
     server.io.on('connection', async(socket : SocketConnection) => {
         await setUserActivity(socket.user, true);
-        connectedUsers.set(socket.user._id, socket.id);
+        connectedUsers.set(socket.user._id.toString(), socket.id);
 
         socket.on('disconnect', async() => {
             await setUserActivity(socket.user, false);
-            connectedUsers.delete(socket.user._id);
+            connectedUsers.delete(socket.user._id.toString());
         });
     });
 }

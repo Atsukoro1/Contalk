@@ -93,10 +93,11 @@ export async function conversationCreateService(
         };
     };
 
-    await new Conversation({
+    const newConv = new Conversation({
         creator: user._id,
         recipient: recipient._id
-    }).save();
+    });
+    await newConv.save();
 
     return {
         success: true
