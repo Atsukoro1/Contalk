@@ -20,7 +20,7 @@
 </div>
 
 ## About The Project
-This project is an API for Contalk which is a messaging app similiar to Messenger by Facebook/Meta. I created this app because i believe its good to bring people together without stealing any data from them.
+This project is an API for Contalk which is a messaging app similiar to Messenger by Facebook/Meta.
 
 Why i made this project:
 * I wanted to make chat application that will bring people together
