@@ -18,6 +18,12 @@ import { User } from '../models/user.model';
 import socketValidation from "../middleware/socketToken.middleware";
 
 /*
+    IO Socket server instance that we are using to send messages to
+    another connected socket
+*/
+export let io : SocketServer | null = null;
+
+/*
     We'll store all connected users here.
     All users will be stored in format mongoose_object_id => socket_id
 
@@ -27,28 +33,28 @@ import socketValidation from "../middleware/socketToken.middleware";
 export const connectedUsers : Map<string, string> = new Map();
 
 /**
- * 
- * @param userId 
- * @param socket 
- * @param event 
- * @param data 
- * @returns 
+ * @export
+ * @async
+ * @name emitEvent
+ * @description Emits a message to another connected socket,
+ * we're using this function primary in routes because we don't have
+ * access to the fastify server instance there.
+ * @param {Types.ObjectId} userId 
+ * @param {Socket} socket 
+ * @param {string} event 
+ * @param {string} data 
+ * @returns {Promise<void>}
  */
 export async function emitEvent(
-    userId: Types.ObjectId, 
-    socket: Socket,
+    userId: Types.ObjectId,
     event: string,
     data: any
-) {
+) : Promise<void> {
     const sendTo : string | undefined = connectedUsers.get(userId.toString());
+    if(!sendTo || io === null) return;
 
-    if(!sendTo) return;
-
-    await socket
-    .to(sendTo)
+    await io.to(sendTo)
     .emit(event, data);
-
-    return;
 }
 
 /*
@@ -88,6 +94,7 @@ async function setUserActivity(user : User & Document, online : boolean) : Promi
  */
 export default async function(server : FastifyServer) : Promise<void> {
     await server.ready();
+    io = server.io;
 
     server.io.use(socketValidation);
     

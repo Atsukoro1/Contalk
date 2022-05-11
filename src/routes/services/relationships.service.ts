@@ -1,13 +1,12 @@
 // Models
 import { Types, Document } from "mongoose";
-import { Socket } from "socket.io";
 
 // Services, models & Interfaces
 import { User } from "../../models/user.model";
 import { Relation } from "../../models/relation.model";
 
-// Map with all connected users
-import { connectedUsers } from "../../loaders/websocketLoader";
+// Function that allows us to send messages from our socket io instance
+import { emitEvent } from "../../loaders/websocketLoader";
 
 /**
  * @asyncw
@@ -38,8 +37,7 @@ async function getRelationships(receiver : User, user : User) : Promise<Array<Re
  */
 export async function reportServiceAddFriend(
     body: RelationshipsRequestBody,
-    user: User,
-    socket: Socket
+    user: User
 ) : Promise<RelationshipsResponse | RelationshipsError> {
     // Find user and check if he exists or is not banned
     const receiver : User = await User.findById(body._id);
@@ -129,8 +127,7 @@ export async function reportServiceAddFriend(
  */
 export async function reportServiceDeclineFriendRequest(
     body: RelationshipsRequestBody,
-    user: User,
-    socket: Socket
+    user: User
 ) : Promise<RelationshipsResponse | RelationshipsError> {
     // Find user and check if he exists or is not banned
     const receiver : User = await User.findById(body._id);
@@ -177,8 +174,7 @@ export async function reportServiceDeclineFriendRequest(
  */
  export async function reportServiceBlock(
     body: RelationshipsRequestBody,
-    user: User,
-    socket: Socket
+    user: User
 ) : Promise<RelationshipsResponse | RelationshipsError> {
     // Find user and check if he exists or is not banned
     const receiver : User = await User.findById(body._id);
@@ -269,8 +265,7 @@ export async function reportServiceDeclineFriendRequest(
  */
  export async function reportServiceUnblock(
     body: RelationshipsRequestBody,
-    user: User,
-    socket: Socket
+    user: User
 ) : Promise<RelationshipsResponse | RelationshipsError> {
     // Find user and check if he exists or is not banned
     const receiver : User & Document = await User.findById(body._id);

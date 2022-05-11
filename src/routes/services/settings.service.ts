@@ -1,12 +1,11 @@
 // Services, models & Interfaces
 import { User } from "../../models/user.model";
 
-// Map with all connected users
-import { connectedUsers } from "../../loaders/websocketLoader";
+// Function that allows us to send messages from our socket io instance
+import { emitEvent } from "../../loaders/websocketLoader";
 
 // Modules
 import { hash, verify } from "argon2";
-import { Socket } from "socket.io";
 
 interface Iterable {
     inBody: string;
@@ -22,8 +21,7 @@ interface Iterable {
  */
 export async function settingsService(
     body: SettingsBody,
-    user: User,
-    socket: Socket
+    user: User
 ) : Promise<SettingsError | SettingsResponse> {
     const passwordValid : boolean = await verify(user.password, body.password);
     if(!passwordValid) {

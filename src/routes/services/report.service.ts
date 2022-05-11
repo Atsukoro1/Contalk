@@ -1,12 +1,9 @@
-// Libraries
-import { Socket } from "socket.io";
-
 // Services, models & Interfaces
 import { User } from "../../models/user.model";
 import { Report } from "../../models/report.model";
 
-// Map with all connected users
-import { connectedUsers } from "../../loaders/websocketLoader";
+// Function that allows us to send messages from our socket io instance
+import { emitEvent } from "../../loaders/websocketLoader";
 
 /**
  * @async
@@ -18,8 +15,7 @@ import { connectedUsers } from "../../loaders/websocketLoader";
  */
 export async function reportService(
     body: ReportBody,
-    user: User,
-    socket: Socket
+    user: User
 ) : Promise<ReportError | ReportResponse> {
     const target : User = await User.findById(body._id);
     if(!target || target.type === 'BANNED' || target.type === 'ADMIN') {

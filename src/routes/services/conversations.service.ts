@@ -1,6 +1,5 @@
 // Modules & External dependencies
 import { Document, Types } from "mongoose";
-import { Socket } from "socket.io";
 
 // Interfaces, services & Models
 import { User } from "../../models/user.model";
@@ -8,8 +7,8 @@ import { Relation } from "../../models/relation.model";
 import { Conversation } from "../../models/conversation.model";
 import { Message } from "../../models/message.model";
 
-// Map with all connected users
-import { connectedUsers } from "../../loaders/websocketLoader";
+// Function that allows us to send messages from our socket io instance
+import { emitEvent } from "../../loaders/websocketLoader";
 
 /**
  * @async
@@ -21,8 +20,7 @@ import { connectedUsers } from "../../loaders/websocketLoader";
  */
 export async function conversationCreateService(
     body: ConversationCreateBody,
-    user: User,
-    socket: Socket
+    user: User
 ) : Promise<ConversationError | ConversationResponse> {
     // Check if request author is trying to start conversation with themselves
     if(user._id.equals(body._id)) {
@@ -114,8 +112,7 @@ export async function conversationCreateService(
  */
 export async function conversationChangeTitleService(
     body: ConversationChangeTitleBody,
-    user: User,
-    socket: Socket
+    user: User
 ) : Promise<ConversationError | ConversationResponse> {
     // Find the conversation provided by user from the request and check if it exists
     const conversation : Conversation & Document = await Conversation.findById(body._id);
@@ -153,8 +150,7 @@ export async function conversationChangeTitleService(
  */
 export async function conversationSendMessage(
     body: ConversationSendMessageBody,
-    user: User,
-    socket: Socket
+    user: User
 ) : Promise<ConversationError | ConversationResponse> {
     // Find conversation by id provided in the request body and check if it exists
     const conversation : Conversation & Document = await Conversation.findById(body._id);
@@ -200,8 +196,7 @@ export async function conversationSendMessage(
  */
 export async function conversationDeleteMessage(
     body: ConversationDeleteMessageBody,
-    user: User,
-    socket: Socket
+    user: User
 ) : Promise<ConversationError | ConversationResponse> {
     // Find conversation and check if it exists
     const conversation : Conversation & Document | null = await Conversation.findById(body._id);
@@ -260,8 +255,7 @@ export async function conversationDeleteMessage(
  */
 export async function conversationMessageEditService(
     body: ConversationEditMessageBody,
-    user: User, 
-    socket: Socket
+    user: User
 ) : Promise<ConversationError | ConversationResponse> {
     // Find conversation and check if it exists
     const conversation : Conversation & Document | null = await Conversation.findById(body._id);

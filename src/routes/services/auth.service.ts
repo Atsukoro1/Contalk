@@ -6,9 +6,6 @@ import {
 // Modules
 import * as argon2 from "argon2";
 import * as jwt from "jsonwebtoken";
-import {
-    Socket
-} from "socket.io";
 
 /**
  * @async
@@ -19,8 +16,7 @@ import {
  */
 export async function loginService(
     body: AuthLoginBody,
-    user: User,
-    socket: Socket
+    user: User
 ): Promise <AuthResponse | AuthError> {
     const existingUser = await User.findOne({
         email: body.email
@@ -60,8 +56,7 @@ export async function loginService(
  */
 export async function registerService(
     body: AuthRegisterBody,
-    user: User,
-    socket: Socket
+    user: User
 ): Promise < AuthResponse | AuthError > {
     const existingUser = await User.findOne({
         email: body.email
