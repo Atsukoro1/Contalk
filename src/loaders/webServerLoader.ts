@@ -42,7 +42,11 @@ async function loadRoutes(server : FastifyInstance) : Promise<void> {
                     },
 
                     async handler(req : FastifyRequest, res : FastifyReply) : Promise<void> {
-                        await (<any>route).service(req.body, (<any>req).user, res);
+                        if(route.method === 'GET') {
+                            await (<any>route).service(req.query, (<any>req).user, res);
+                        } else {
+                            await (<any>route).service(req.body, (<any>req).user, res);
+                        }
                     }
                 });
 
