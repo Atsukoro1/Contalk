@@ -78,6 +78,24 @@ export const conversationMessageEditValidator = {
     })
 };
 
-export function schemaValidator({ schema } : any) {
-    return (data : any) => schema.validate(data);
-};
+export const conversationMessageFetchValidator = {
+    query: Joi.object({
+        _id: Joi.string().custom((value, helpers) => {
+            if(!isValidObjectId(value)) {
+                return helpers.message({ custom: "_id should be a valid ObjectId" });
+            } else {
+                return value;
+            }
+        }),
+        fetchFrom: Joi.number().custom((value, helpers) => {
+            const casted : Date = new Date(value);
+
+            // Check if casted variable is a valid javascript Date object
+            if(Object.prototype.toString.call(casted) === '[object Date]') {
+                return casted;
+            } else {
+                return helpers.message({ custom: "fetchFrom should be a valid date in number format." });
+            }
+        })
+    })
+}

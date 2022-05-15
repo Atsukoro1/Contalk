@@ -322,3 +322,44 @@ export async function conversationMessageEditService(
         success: true
     });
 };
+
+/**
+ * @export
+ * @async
+ * @name conversationFetchMessages
+ * @description Fetch messages from specific conversation
+ * @param {ConversationFetchMessagesBody} body 
+ * @param {User} user 
+ * @param {FastifyReply} res 
+ */
+export async function conversationFetchMessages(
+    body: ConversationFetchMessagesBody,
+    user: User,
+    res: FastifyReply
+) : Promise<ConversationError | ConversationResponse> {
+    const conversation : Conversation | null = await Conversation.findById(body._id);
+    if(!conversation) {
+        return res.status(400).send({
+            error: "This conversation does not exist!"
+        });
+    };
+
+    // Check if user has rights to make changes in this conversation
+    if(!user._id.equals(conversation.creator) && !user._id.equals(conversation.recipient)) {
+        return res.status(400).send({
+            error: "You don't have permissions to manage things in this conversation!"
+        });
+    };
+
+
+    console.log(new Date(body.fetchFrom))
+    const messages : Message[] | null = await Message.find({
+        conversation: conversation._id,
+        createdAt: {
+            $gte: new Date(body.fetchFrom),
+            $lt: new Date(8640000000000000)
+        }
+    }).limit(10);
+
+    return res.status(200).send(messages);
+};

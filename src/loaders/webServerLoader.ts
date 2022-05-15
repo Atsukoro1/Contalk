@@ -19,8 +19,8 @@ import webSocketLoader from './websocketLoader';
  */
 async function loadRoutes(server : FastifyInstance) : Promise<void> {
     /*
-        Filter files to fetch and return only files with .js suffix, compiler turns our typescript files
-        into regular javascript because otherwise our compiler would not be able to run it
+        Filter files to fetch and return only files with .js suffix, typescript compiler turns our typescript files
+        into regular javascript ones because otherwise node.js interpreter would not be able to run it
     */
     const files : Array<String> = await fs.readdirSync("./dist/routes/controllers/").filter(
         el => el.endsWith('.js')

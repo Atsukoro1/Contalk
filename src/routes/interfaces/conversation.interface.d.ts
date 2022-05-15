@@ -30,3 +30,8 @@ declare interface ConversationEditMessageBody {
     messageId: string,
     textContent: string
 }
+
+declare interface ConversationFetchMessagesBody {
+    _id: string,
+    fetchFrom: number
+}

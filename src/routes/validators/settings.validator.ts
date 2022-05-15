@@ -10,7 +10,3 @@ export const settingsValidator = {
         newPassword: Joi.string().optional().min(8).max(1024)
     })
 };
-
-export function schemaValidator({ schema } : any) {
-    return (data : any) => schema.validate(data);
-};

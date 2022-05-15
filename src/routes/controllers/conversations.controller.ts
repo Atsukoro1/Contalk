@@ -4,14 +4,16 @@ import {
     conversationChangeTitleValidator,
     conversationMessageSendValidator,
     conversationMessageDeleteValidator,
-    conversationMessageEditValidator
+    conversationMessageEditValidator,
+    conversationMessageFetchValidator
 } from "../validators/conversation.validators";
 import {
     conversationCreateService,
     conversationChangeTitleService,
     conversationSendMessage,
     conversationDeleteMessage,
-    conversationMessageEditService
+    conversationMessageEditService,
+    conversationFetchMessages
 } from "../services/conversations.service"
 
 module.exports = [
@@ -44,5 +46,11 @@ module.exports = [
         url: '/conversation',
         schema: createConversationValidator,
         service: conversationCreateService
+    },
+    {
+        method: 'GET',
+        url: '/conversation/messages',
+        service: conversationFetchMessages,
+        schema: conversationMessageFetchValidator
     }
 ];

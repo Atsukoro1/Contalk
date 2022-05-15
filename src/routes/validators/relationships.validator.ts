@@ -12,7 +12,3 @@ export const relationshipsValidator = {
         }, "Check if value is a valid Mongoose ObjectId").required()
     })
 }
-
-export function schemaValidator({ schema } : any) {
-    return (data : any) => schema.validate(data);
-};

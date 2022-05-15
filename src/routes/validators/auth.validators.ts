@@ -17,7 +17,3 @@ export const registerValidator = {
         phone: Joi.string().required().min(9).max(32)
     })
 }
-
-export function schemaValidator({ schema } : any) {
-    return (data : any) => schema.validate(data);
-};

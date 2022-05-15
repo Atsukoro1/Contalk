@@ -13,7 +13,3 @@ export const reportValidator = {
         reason: Joi.string().min(32).max(1024).required()
     })
 };
-
-export function schemaValidator({ schema } : any) {
-    return (data : any) => schema.validate(data);
-};
