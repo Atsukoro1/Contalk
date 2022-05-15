@@ -350,9 +350,7 @@ export async function conversationFetchMessages(
             error: "You don't have permissions to manage things in this conversation!"
         });
     };
-
-
-    console.log(new Date(body.fetchFrom))
+    
     const messages : Message[] | null = await Message.find({
         conversation: conversation._id,
         createdAt: {

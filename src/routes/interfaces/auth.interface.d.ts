@@ -14,7 +14,6 @@ declare interface AuthRegisterBody extends Record<string, any> {
     password: string;
     name: string;
     surname: string;
-    phone: number;
 }
 
 declare interface AuthLoginBody extends Record<string, any> {
