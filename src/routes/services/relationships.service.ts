@@ -301,3 +301,40 @@ export async function relationshipServiceDeclineFriendRequest(
         success: true
     });
 };
+
+/**
+ * @exports
+ * @async
+ * @name relationshipsServiceFindUsers
+ * @description Find some users by their full name
+ * @param {RelationshipsFindUsersRequestBody} body Body of the HTTP request
+ * @param {User} user Request author's user profile
+ * @param {FastifyReply} res Fastify reply object to send the HTTP response back
+ * @returns {Promise<RelationshipsResponse | RelationshipsError>}
+ */
+export async function relationshipsServiceFindUsers(
+    body: RelationshipsFindUsersRequestBody,
+    user: User,
+    res: FastifyReply
+) : Promise<RelationshipsResponse | RelationshipsError> {
+    const users : User[] | null = await User.find({
+        $or: [
+            {
+                name: { '$regex' : body.searchString, '$options' : 'i' }
+            },
+            {
+                surname: { '$regex' : body.searchString, '$options' : 'i' }
+            }
+        ]
+    }, '_id name surname').limit(10);
+
+    if(users.length === 0) {
+        return res.status(400).send({
+            error: "No users were found!"
+        });
+    };
+
+    return res.status(200).send({
+        users: users
+    });
+};

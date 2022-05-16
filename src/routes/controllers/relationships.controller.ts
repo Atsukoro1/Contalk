@@ -2,10 +2,12 @@ import {
     relationshipServiceAddFriend,
     relationshipServiceBlock,
     relationshipServiceDeclineFriendRequest,
-    relationshipServiceUnblock
+    relationshipServiceUnblock,
+    relationshipsServiceFindUsers
 } from "../services/relationships.service";
 import {
     relationshipsValidator,
+    RelationshipsFindUsersValidator
 } from "../validators/relationships.validator";
 
 module.exports = [
@@ -32,5 +34,11 @@ module.exports = [
         method: 'POST',
         schema: relationshipsValidator,
         service: relationshipServiceAddFriend
+    },
+    {
+        url: '/relationships/findUsers',
+        method: 'GET',
+        schema: RelationshipsFindUsersValidator,
+        service: relationshipsServiceFindUsers
     }
 ];
