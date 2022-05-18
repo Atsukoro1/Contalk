@@ -80,7 +80,7 @@ export async function registerService(
         _id: newUser._id
     }, process.env.JWT_SECRET);
 
-    return res.status(400).send({
+    return res.status(200).send({
         message: "Thank you for registering!",
         token: token,
         user: newUser
