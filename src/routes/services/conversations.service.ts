@@ -352,11 +352,7 @@ export async function conversationFetchMessages(
     };
     
     const messages : Message[] | null = await Message.find({
-        conversation: conversation._id,
-        createdAt: {
-            $gte: new Date(body.fetchFrom),
-            $lt: new Date(8640000000000000)
-        }
+        conversation: conversation._id
     }).limit(10);
 
     return res.status(200).send(messages);
