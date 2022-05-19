@@ -73,11 +73,11 @@ export async function conversationCreateService(
         $or: [
             {
                 creator: recipient._id,
-                target: user._id
+                recipient: user._id
             },
             {
                 creator: user._id,
-                target: recipient._id
+                recipient: recipient._id
             }
         ]
     });
