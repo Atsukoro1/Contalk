@@ -325,7 +325,8 @@ export async function relationshipsServiceFindUsers(
             {
                 surname: { '$regex' : body.searchString, '$options' : 'i' }
             }
-        ]
+        ],
+        _id: { $ne: user._id }
     }, '_id name surname').limit(10);
 
     if(users.length === 0) {

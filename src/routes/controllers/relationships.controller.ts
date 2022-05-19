@@ -28,7 +28,7 @@ module.exports = [
         method: 'POST',
         schema: relationshipsValidator,
         service: relationshipServiceBlock
-    },
+    }, 
     {
         url: '/relationships/friends', 
         method: 'POST',
