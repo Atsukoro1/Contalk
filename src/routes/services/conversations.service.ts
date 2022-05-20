@@ -170,7 +170,7 @@ export async function conversationSendMessage(
     };
 
     // Check if user has rights to post into the conversation (is creator or receiver)
-    if(!conversation.creator.equals(user._id) && conversation.recipient.equals(user._id)) {
+    if(!conversation.creator.equals(user._id) && !conversation.recipient.equals(user._id)) {
         return res.status(400).send({
             error: "You don't have rights to post into this conversation"
         });
