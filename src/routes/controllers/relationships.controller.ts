@@ -7,20 +7,21 @@ import {
 } from "../services/relationships.service";
 import {
     relationshipsValidator,
-    RelationshipsFindUsersValidator
+    RelationshipsFindUsersValidator,
+    relationshipsQueryValidator
 } from "../validators/relationships.validator";
 
 module.exports = [
     {
         url: '/relationships/block',
         method: 'DELETE',
-        schema: relationshipsValidator,
+        schema: relationshipsQueryValidator,
         service: relationshipServiceUnblock
     }, 
     {
         url: '/relationships/friends',
         method: 'DELETE',
-        schema: relationshipsValidator,
+        schema: relationshipsQueryValidator,
         service: relationshipServiceDeclineFriendRequest
     },
     {

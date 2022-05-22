@@ -4,5 +4,6 @@ declare interface MeError {
 
 declare interface MeResponse {
     user: object[],
-    conversations: object[] | null
+    conversations: object[] | null,
+    friendRequest: object[] | null
 }

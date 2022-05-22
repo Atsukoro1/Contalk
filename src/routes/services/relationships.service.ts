@@ -5,6 +5,7 @@ import { FastifyReply } from "fastify";
 // Services, models & Interfaces
 import { User } from "../../models/user.model";
 import { Relation } from "../../models/relation.model";
+import { Conversation } from "../../models/conversation.model";
 
 // Function that allows us to send messages from our socket io instance
 import { emitEvent } from "../../loaders/websocketLoader";
@@ -97,8 +98,15 @@ export async function relationshipServiceAddFriend(
         ]);
 
         // Emit the new friend data to both the connected users
-        await emitEvent(user._id, 'friendsAdd', { user: receiver._id });
-        await emitEvent(receiver._id, 'friendsAdd', { user: user._id });
+        const newConv = new Conversation({
+            creator: new Types.ObjectId(user._id),
+            recipient: new Types.ObjectId(receiver._id)
+        });
+
+        await newConv.save();
+
+        await emitEvent(user._id, 'conversationCreate', newConv);
+        await emitEvent(receiver._id, 'conversationCreate', newConv);
 
         return res.status(200).send({
             success: true
