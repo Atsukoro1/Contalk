@@ -337,6 +337,66 @@ export async function relationshipsServiceFindUsers(
         _id: { $ne: user._id }
     }, '_id name surname').limit(10);
 
+    /*
+        We need to find all relations and then filter user's existing friends from
+        the final array
+    */
+    const relations : Relation[] | null = await Relation.find({
+        $or: [
+            {
+                creator: new Types.ObjectId(user._id),
+                $or: [
+                    {
+                        type: 'FRIENDS'
+                    },
+                    {
+                        type: 'FRIEND_REQUEST'
+                    }
+                ],
+                target: { 
+                    $in: !users ? [] : [...users].map((el: User) : Types.ObjectId => {
+                        return new Types.ObjectId(el._id)
+                    }) 
+                }
+            },
+            {
+                target: new Types.ObjectId(user._id),
+                $or: [
+                    {
+                        type: 'FRIENDS'
+                    },
+                    {
+                        type: 'FRIEND_REQUEST'
+                    }
+                ],
+                creator: { 
+                    $in: !users ? [] : [...users].map((el: User) : Types.ObjectId => {
+                        return new Types.ObjectId(el._id)
+                    }) 
+                }
+            }
+        ]
+    });
+
+    /*
+        Loop through each contact and remove it from array if it contains 
+        user id from the relations array because the opponent user is already
+        request author's friend or he already sent a friend request
+    */
+    relations.forEach(el => {
+        users.filter(usr => {
+            if(el.creator._id.equals(usr._id) || el.target._id.equals(usr._id)) {
+                const inArr : User[] | null = [...users].filter(us => {
+                    return us._id.equals(el.creator) || us._id.equals(el.target)
+                });
+
+                for(const toBeRemoved of inArr) {
+                    users.splice(users.indexOf(toBeRemoved), 1);
+                }
+            }
+        })
+    });
+
     if(users.length === 0) {
         return res.status(400).send({
             error: "No users were found!"
