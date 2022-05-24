@@ -352,11 +352,8 @@ export async function conversationFetchMessages(
     };
     
     const messages : Message[] | null = await Message.find({
-        conversation: conversation._id,
-        createdAt: {
-            $lte: new Date(body.fetchFrom)
-        }
-    }).sort({ createdAt: -1 }).limit(10).exec();
+        conversation: conversation._id
+    }).sort({ createdAt: -1 }).exec();
 
     return res.status(200).send(messages.reverse());
 };

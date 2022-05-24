@@ -86,16 +86,6 @@ export const conversationMessageFetchValidator = {
             } else {
                 return value;
             }
-        }),
-        fetchFrom: Joi.number().custom((value, helpers) => {
-            const casted : Date = new Date(value);
-
-            // Check if casted variable is a valid javascript Date object
-            if(Object.prototype.toString.call(casted) === '[object Date]') {
-                return casted;
-            } else {
-                return helpers.message({ custom: "fetchFrom should be a valid date in number format." });
-            }
         })
     })
 }
