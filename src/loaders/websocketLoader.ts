@@ -100,6 +100,7 @@ export default async function(server : FastifyServer) : Promise<void> {
     
     server.io.on('connection', async(socket : SocketConnection) => {
         await setUserActivity(socket.user, true);
+        connectedUsers.delete(socket.user._id.toString());
         connectedUsers.set(socket.user._id.toString(), socket.id);
 
         socket.on('disconnect', async() => {
