@@ -40,7 +40,7 @@ export const conversationMessageSendValidator = {
 }
 
 export const conversationMessageDeleteValidator = {
-    body: Joi.object({
+    querystring: Joi.object({
         _id: Joi.string().custom((value, helpers) => {
             if(!isValidObjectId(value)) {
                 return helpers.message({ custom: "_id should be a valid ObjectId" });
