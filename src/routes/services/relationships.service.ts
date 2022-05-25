@@ -252,6 +252,19 @@ export async function relationshipServiceDeclineFriendRequest(
         });
     };
 
+    await Conversation.deleteMany({
+        $or: [
+            {
+                creator: user._id,
+                recipient: receiver._id
+            },
+            {
+                creator: receiver._id,
+                recipient: user._id
+            }
+        ]
+    });
+
     // Create the block schemas and insert it
     await new Relation({
         type: 'BLOCKED',
