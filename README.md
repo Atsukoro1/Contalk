@@ -5,10 +5,10 @@
     <img src="https://i.postimg.cc/hjW5Fwd0/logo.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">Contalk API</h3>
+  <h3 align="center">Contalk</h3>
 
   <p align="center">
-    An API for my simple chat application
+    A simple chat application
     <br />
     <a href="www.example.cz"><strong>Explore the docs (soon) »</strong></a>
     <br />
@@ -20,7 +20,6 @@
 </div>
 
 ## About The Project
-This project is an API for Contalk which is a messaging app similiar to Messenger by Facebook/Meta.
 
 Why i made this project:
 * I wanted to make chat application that will bring people together
@@ -35,6 +34,9 @@ This section lists all the frameworks, libraries and other technologies that wer
 * [Mongoose](https://mongoosejs.com/)
 * [Socket.io](https://socket.io/)
 * [Node.js](https://nodejs.org/en/)
+* [Axios](https://www.npmjs.com/package/axios)
+* [Next.js](https://nextjs.org/)
+* [Framer-motion](https://www.framer.com/motion/)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -51,32 +53,21 @@ Firstly, clone the repo from the official Contalk Github repository
    ```
 
 2. Install required libraries and tools
-You will need Yarn or Npm to install all the required packages listed in package.json
+You will need Yarn or Npm to install all the required packages listed in package.json, it is not not required
+to install dependencies from client and server repository independently. You can use lerna to do this automatically
+for you.
+
 * To install Npm go to the [Node.js page](https://nodejs.org/en/) and complete installation for the LTS version
 * To install Yarn, you will need to have Npm installed, but i really recommend installing it because it is much faster than Npm
 
-* Installing required packages with Npm
+* Building and starting applications using Lerna
   ```sh
-  npm install
+  npx lerna run build
+
+  ... and then start it with
+
+  npx lerna run start
   ```
-
-* Installing required packages with Yarn
-  ```sh
-  yarn install
-  ```
-
-4. Compile the Typescript code and run it
-* Running the application with Npm
-   ```sh
-   npm run watch
-   npm start
-   ```
-
-* Running the application with Yarn
-   ```sh
-   yarn run watch
-   yarn start
-   ```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
