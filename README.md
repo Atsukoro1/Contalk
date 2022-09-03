@@ -19,12 +19,14 @@
   </p>
 </div>
 
+## Note
+* This project was intended to be for school final exams, it is not meant to be used for production!
+
 ## About The Project
 
 Why i made this project:
 * I wanted to make chat application that will bring people together
 * Because people want some app that does not collect aditionall data, that are used for advertising purposes. Instead Contalk only collects what it needs to make sure the application will run correctly.
-* It was my as a school project for final examination.
 
 ### Built With
 
@@ -58,8 +60,19 @@ to install dependencies from client and server repository independently. You can
 for you.
 
 * To install Npm go to the [Node.js page](https://nodejs.org/en/) and complete installation for the LTS version
-* To install Yarn, you will need to have Npm installed, but i really recommend installing it because it is much faster than Npm
 
+Now install all required packages for server and client directory using:
+```sh
+npx lerna bootstrap
+```
+
+And the last thing you need is typescript, it will be used to transpile all typescript files to clear javascript,
+install typescript with this command
+```sh
+npm install --location=global typescript
+```
+
+3. Building and running
 * Building and starting applications using Lerna
   ```sh
   npx lerna run build
