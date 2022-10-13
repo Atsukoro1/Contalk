@@ -82,6 +82,19 @@ npm install --location=global typescript
   npx lerna run start
   ```
 
+4. Filling the .env files
+* First, we need to fill the server dotenv variables in following format:
+```env
+MONGO_URI=<mongo connection string>
+JWT_SECRET=<random long string>
+PORT=<web server will run here>
+```
+
+* And now the client variables
+```env
+NEXT_PUBLIC_BASEURL=http://<host>:<port>
+```
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Contributing

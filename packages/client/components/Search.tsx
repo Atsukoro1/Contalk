@@ -55,7 +55,7 @@ const Search : FunctionComponent = () => {
         // Handle bad request
         .catch(err => {
             notyf.error({
-                message: err.response.data.error,
+                message: err.response.data.message,
                 background: "#2563EB",
                 dismissible: true
             });

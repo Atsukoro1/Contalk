@@ -12,6 +12,7 @@ import {
 } from "mongoose";
 
 // Modules, types and interfaces
+import { Conversation } from '../models/conversation.model';
 import { User } from '../models/user.model';
 
 // Socket validation middleware
@@ -69,6 +70,37 @@ interface SocketConnection extends Socket {
 };
 
 /**
+ * This function sends a notification to all the users that are in conversation with the user
+ * that is going online or offline
+ * 
+ * @param {User & Document} user User object
+ * @param {boolean} online If user is offline or online
+ */
+async function send_activity_notification(user: User & Document, online: boolean) : Promise<void> {
+        // Find all users that are in conversation with this user
+        const nevim = await Conversation.find({
+            $or: [
+                {
+                    recipient: user.id
+                },
+                {
+                    creator: user.id
+                }
+            ]
+        });
+    
+        // Send them all event that user is online or offline
+        for(const conversation of nevim) {
+            const otherUser = conversation.creator.toString() === user.id.toString() ? conversation.recipient : conversation.creator;
+
+            await emitEvent(otherUser, 'userActivity', {
+                userId: user.id,
+                online
+            });
+        }
+}
+
+/**
  * @async
  * @name setUserActivity
  * @description Set user online status to false or true based on if is socket online
@@ -77,6 +109,8 @@ interface SocketConnection extends Socket {
  * @returns {Promise<void>}
  */
 async function setUserActivity(user : User & Document, online : boolean) : Promise<void> {
+    send_activity_notification(user, online);
+
     await user.updateOne({
         isActive: online ? true : false
     });

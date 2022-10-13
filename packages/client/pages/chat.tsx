@@ -73,6 +73,20 @@ const Chat : NextPage = () => {
             }
         });
 
+        newSocket.on('userActivity', (obj: any) => {
+            let found = null;
+            const convs = [...conversations];
+
+            conversations.forEach((el: any) => {
+                if(el.creator._id == obj.userId || el.recipient._id == obj.userId) {
+                    found = el;
+                }
+            });
+
+            convs[convs.indexOf(found)].creator.isActive = obj.online;
+            setConversations(convs);
+        });
+
         newSocket.on('messageDelete', (obj: any) => {
             if(selectedConversation?._id == obj.conversation) {
                 const f = [...messages];

@@ -47,10 +47,10 @@ const RegisterModal : FunctionComponent<PropsI> = ({
       // Handle bad request
       .catch(err => {
         return notyf.error({
-        message: err.response.data.error,
-        dismissible: true,
-        background: '#3B82F6'
-      });
+          message: err.response.data.message,
+          dismissible: true,
+          background: '#3B82F6'
+        });
       })
     };
 
