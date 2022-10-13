@@ -121,8 +121,14 @@ export async function relationshipServiceAddFriend(
         await newRelation.save();
 
         // Emit the new friend data to both the connected users
-        await emitEvent(user._id, 'friendsRequestAdd', { user: receiver._id });
-        await emitEvent(receiver._id, 'friendsRequestAdd', { user: user._id });
+        receiver['email'] = undefined;
+        receiver['password'] = undefined;
+
+        user['email'] = undefined;
+        user['password'] = undefined;
+
+        await emitEvent(user._id, 'friendsRequestAdd', { user: receiver });
+        await emitEvent(receiver._id, 'friendsRequestAdd', { user: user });
 
         return res.status(200).send({
             success: true
