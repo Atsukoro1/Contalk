@@ -188,11 +188,13 @@ export async function conversationSendMessage(
         lastMessage: newMessage._id
     });
 
+    let toSendMessage: Message = await newMessage.populate("author", "name");
+
     // Send the message to the both connected users
-    await emitEvent(user._id, 'messageCreate', newMessage);
+    await emitEvent(user._id, 'messageCreate', toSendMessage);
     await emitEvent(
         conversation.recipient.equals(user._id) ? conversation.creator : conversation.recipient,
-        'messageCreate', newMessage
+        'messageCreate', toSendMessage
     );
 
     return res.status(200).send({
