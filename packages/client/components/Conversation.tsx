@@ -1,4 +1,3 @@
-import { loadGetInitialProps } from "next/dist/shared/lib/utils";
 import { Menu, Item, useContextMenu } from 'react-contexify';
 import { FunctionComponent } from "react";
 import { motion } from 'framer-motion';

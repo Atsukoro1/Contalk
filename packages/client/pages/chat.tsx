@@ -1,17 +1,18 @@
 // Libraries
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { io } from "socket.io-client";
 import { NextPage } from "next";
 import axios from "axios";
-import { useState, useEffect, useSyncExternalStore } from "react";
-import { io } from "socket.io-client";
-import { motion } from "framer-motion";
 
 // Components
+import MessageNotification from "../components/MessageNotification";
+import FriendRequests from "../components/FriendRequests";
+import ActualContact from "../components/ActualContact";
+import MessageInput from "../components/MessageInput";
 import Conversation from "../components/Conversation";
 import Message from "../components/Message";
-import ActualContact from "../components/ActualContact";
 import Search from "../components/Search";
-import MessageInput from "../components/MessageInput";
-import FriendRequests from "../components/FriendRequests";
 
 function getToken(cookieString: string) : string | null {
     if(cookieString.length == 0) return null;
@@ -33,9 +34,13 @@ const Chat : NextPage = () => {
     const [conversations, setConversations] = useState<any>(null);
     const [user, setUser] = useState<any>(null);
     const [selectedConversation, setSelectedConversation] = useState<any>(null);
+    const [notReadMessages, setNotReadMessages] = useState<any>([]);
     const [messages, setMessages] = useState<any>(null);
-    const [friendRequests, setFriendRequests] = useState<any>(null);
     const [socket, setSocket] = useState<any>(null);
+
+    // Outgoing and ingoing friend requests
+    const [oFriendRequests, oSetFriendRequests] = useState<any>([]);
+    const [iFriendRequests, iSetFriendRequests] = useState<any>([]);
 
     function fetchMess() : Promise<any> {
         return new Promise((resolve, reject) => {
@@ -58,6 +63,7 @@ const Chat : NextPage = () => {
         const newSocket = io(`${process.env.NEXT_PUBLIC_BASEURL}?token=${getToken(document.cookie)}`);
         await newSocket.connect();
         setSocket(newSocket);
+
         newSocket.on('messageCreate', (obj: any) => {
             if(selectedConversation?._id == obj.conversation) {
                 const f = [...messages];
@@ -70,6 +76,22 @@ const Chat : NextPage = () => {
                         doc.scrollTop = doc.scrollHeight;
                     }, 100)
                 }
+            } else {
+                let f = [...notReadMessages];
+                f.push(obj);
+                setNotReadMessages(f);
+            }
+        });
+
+        newSocket.on('friendsRequestAdd', (obj: any) => {
+            if(obj.user._id == user._id) {
+                let data = [...oFriendRequests];
+                data.push({ creator: obj.user });
+                oSetFriendRequests(data);
+            } else {
+                let data = [...iFriendRequests];
+                data.push({ creator: obj.user });
+                iSetFriendRequests(data);
             }
         });
 
@@ -108,7 +130,7 @@ const Chat : NextPage = () => {
 
             setUser(data.data.user);
             setConversations(data.data.conversations);
-            setFriendRequests(data.data.friendRequests);
+            iSetFriendRequests(data.data.friendRequests);
         } catch(err) {
             window.location.href = '/';
         }
@@ -168,8 +190,9 @@ const Chat : NextPage = () => {
                 {/* Search for friends input */}
                 <Search/>
 
-                {/* Display user's friend requests */}
-                <FriendRequests frReqs={friendRequests}/>
+                {/* Display user's outgoing and ingoing friend requests */}
+                <FriendRequests frReqs={iFriendRequests}/>
+                <FriendRequests frReqs={oFriendRequests}/>
 
                 {/* List of conversations opened by user */}
                 <ul 
@@ -296,6 +319,25 @@ const Chat : NextPage = () => {
                 </div>
             </div>
         </div>
+
+        <MessageNotification 
+            messages={notReadMessages}
+            onSelect={(_id, key) => {
+                // Transfer the user to corrent conversation
+                let conv = conversations.find((el: any) => {
+                    return el._id == _id
+                });
+                
+                if(conv) {
+                    setSelectedConversation(conv);
+                }
+
+                // Remove the clicked element from array
+                const f = [...notReadMessages];
+                delete f[key];
+                setNotReadMessages(f);
+            }}
+        />
     </div>
     )
 }
